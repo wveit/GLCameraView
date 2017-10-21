@@ -1,4 +1,4 @@
-package com.example.androidu.glcamera.ar_framework.graphic3d;
+package com.example.androidu.glcamera.ar_framework.graphics3d;
 
 
 import android.opengl.GLES20;
@@ -9,7 +9,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 
-public class Model {
+public class Model3D {
 
     private FloatBuffer mBuffer;
     private float[] mColor = {0.0f, 0.0f, 0.0f, 0.8f};
@@ -35,7 +35,7 @@ public class Model {
     }
 
 
-    public Model(){
+    public Model3D(){
         mBuffer = null;
         sShaderProgram = loadProgram(vertexShaderCode, fragmentShaderCode);
     }

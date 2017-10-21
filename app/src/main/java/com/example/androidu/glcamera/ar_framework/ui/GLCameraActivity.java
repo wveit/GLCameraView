@@ -26,7 +26,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.example.androidu.glcamera.ar_framework.graphic3d.Model;
+import com.example.androidu.glcamera.ar_framework.graphics3d.Model3D;
 import com.example.androidu.glcamera.ar_framework.util.MyPermission;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -40,7 +40,7 @@ public class GLCameraActivity extends AppCompatActivity {
     private GLSurfaceView mGLView;
     private CameraView mCameraView;
 
-    private Model mTriangle;
+    private Model3D mTriangle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

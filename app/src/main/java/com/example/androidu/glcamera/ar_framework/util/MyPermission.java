@@ -10,6 +10,7 @@
  *
  *      <uses-permission android:name="android.permission.CAMERA"/>
  *      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+ *      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
  *
  *  In addition, you may want to add a <uses-feature> tag to the manifest so that the play-store
  *  can filter; only allowing apps with the particular capability to install your app. i.e. only
@@ -34,8 +35,10 @@ public class MyPermission {
 
     public static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     public static final String PERMISSION_WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-    public static final int CAMERA_PERMISSION_REQUEST_CODE = 4324;
+    public static final String PERMISSION_ACCESS_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    public static final int CAMERA_PERMISSION_REQUEST_CODE = 40279;
     public static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 40280;
+    public static final int FINE_ACCESS_LOCATION_REQUEST_CODE = 40281;
 
     public static boolean havePermission(Context context, String permissionType){
         return ContextCompat.checkSelfPermission(context, permissionType) == PackageManager.PERMISSION_GRANTED;
