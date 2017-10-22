@@ -88,6 +88,11 @@ public class MyMath {
         return sb.toString();
     }
 
+    public static void copyVec(float[] src, float[] dest){
+        for(int i = 0; i < src.length; i++)
+            dest[i] = src[i];
+    }
+
     public static float landscapeTiltAngle(float[] gravityVec, float[] phoneUpVec){
         float[] xyGravityVec = {gravityVec[0], gravityVec[1], 0};
         float[] phoneFrontVec = {0, 0, -1};
