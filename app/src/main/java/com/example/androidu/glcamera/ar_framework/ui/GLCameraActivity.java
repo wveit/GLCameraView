@@ -45,15 +45,13 @@ public class GLCameraActivity extends AppCompatActivity {
 
     private FrameLayout mFrameLayout;
     private GLSurfaceView mGLView;
-    private MyCameraView mCameraView;
-
-    private Model3D mTriangle;
+    private CameraView mCameraView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
@@ -72,8 +70,7 @@ public class GLCameraActivity extends AppCompatActivity {
 
 
         if(MyPermission.havePermission(this, MyPermission.PERMISSION_CAMERA)){
-            mCameraView = new MyCameraView(this);
-            mCameraView.setWillNotDraw(false);
+            mCameraView = new CameraView(this);
             mFrameLayout.addView(mCameraView);
         }
         else{
@@ -111,10 +108,7 @@ public class GLCameraActivity extends AppCompatActivity {
     public void GLDraw(){}
 
 
-    public void invalidate(){
-        mCameraView.postInvalidate();
-        mGLView.postInvalidate();
-    }
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,23 +135,7 @@ public class GLCameraActivity extends AppCompatActivity {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    //      MyCameraView
-    //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public class MyCameraView extends CameraView{
-        public MyCameraView(Context context){
-            super(context);
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-            Log.d("TAG", "draw(canvas)");
-        }
-    }
 }
 
 

@@ -11,33 +11,31 @@ import java.nio.FloatBuffer;
 
 public class Model3D {
 
-    private FloatBuffer mBuffer;
-    private float[] mColor = {0.0f, 0.0f, 0.0f, 0.8f};
+    private FloatBuffer mBuffer = null;
+    private float[] mColor = {0.0f, 0.8f, 0.0f, 0.1f};
 
-    private static int sShaderProgram;
+    private int mShaderProgram;
+    private int mNumVertices = 0;
 
     private static final String vertexShaderCode =
             "attribute vec4 vPosition;" +
-                    "uniform mat4 uMVPMatrix;" +
-                    "void main() {" +
-                    "  gl_Position = uMVPMatrix * vPosition;" +
-                    "}";
+            "uniform mat4 uMVPMatrix;" +
+            "void main() {" +
+            "  gl_Position = uMVPMatrix * vPosition;" +
+            "}";
 
     private static final String fragmentShaderCode =
             "precision mediump float;" +
-                    "uniform vec4 vColor;" +
-                    "void main() {" +
-                    "  gl_FragColor = vColor;" +
-                    "}";
+            "uniform vec4 vColor;" +
+            "void main() {" +
+            "  gl_FragColor = vColor;" +
+            "}";
 
-    static{
-        sShaderProgram = loadProgram(vertexShaderCode, fragmentShaderCode);
-    }
+
 
 
     public Model3D(){
-        mBuffer = null;
-        sShaderProgram = loadProgram(vertexShaderCode, fragmentShaderCode);
+        mShaderProgram = loadProgram(vertexShaderCode, fragmentShaderCode);
     }
 
     public void draw(){
@@ -50,16 +48,16 @@ public class Model3D {
         if(mBuffer == null)
             return;
 
-        GLES20.glUseProgram(sShaderProgram);
+        GLES20.glUseProgram(mShaderProgram);
 
-        int positionAttrib = GLES20.glGetAttribLocation(sShaderProgram, "vPosition");
+        int positionAttrib = GLES20.glGetAttribLocation(mShaderProgram, "vPosition");
         GLES20.glEnableVertexAttribArray(positionAttrib);
         GLES20.glVertexAttribPointer(positionAttrib, 3, GLES20.GL_FLOAT, false, 3 * 4, mBuffer);
 
-        int matrixUniform = GLES20.glGetUniformLocation(sShaderProgram, "uMVPMatrix");
+        int matrixUniform = GLES20.glGetUniformLocation(mShaderProgram, "uMVPMatrix");
         GLES20.glUniformMatrix4fv(matrixUniform, 1, false, MVPMatrix, 0);
 
-        int colorUniform = GLES20.glGetUniformLocation(sShaderProgram, "vColor");
+        int colorUniform = GLES20.glGetUniformLocation(mShaderProgram, "vColor");
         GLES20.glUniform4fv(colorUniform, 1, mColor, 0);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3);
@@ -84,9 +82,22 @@ public class Model3D {
         loadVertices(vertices);
     }
 
+    public void loadSquare(){
+        float[] vertices = {
+                -0.5f, -0.5f, 0f,
+                0.5f, -0.5f, 0f,
+                0.5f, 0.5f, 0f,
+                -0.5f, -0.5f, 0f,
+                0.5f, 0.5f, 0f,
+                -0.5f, 0.5f, 0f
+        };
+
+        loadVertices(vertices);
+    }
+
     public void loadVertices(float[] vertexList){
 
-
+        mNumVertices = vertexList.length;
         ByteBuffer bb = ByteBuffer.allocateDirect(vertexList.length * 4);
         bb.order(ByteOrder.nativeOrder());
         mBuffer = bb.asFloatBuffer();

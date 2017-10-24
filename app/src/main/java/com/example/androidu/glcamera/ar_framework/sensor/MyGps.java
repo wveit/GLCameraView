@@ -63,6 +63,11 @@ public class MyGps {
         public void handleLocation(Location location);
     }
 
+
+
+
+
+
     private OnSuccessListener<Location> mLocationSuccessListener = new OnSuccessListener<Location>() {
         @Override
         public void onSuccess(Location location) {

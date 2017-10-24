@@ -24,10 +24,10 @@ public class Camera3D {
 
     public void set(float[] position, float[] frontVec, float[] upVec){
 
-        mPosition = position;
-        mFrontVec = frontVec;
-        mUpVec = upVec;
-        mRightVec = MyMath.crossProduct(mFrontVec, mUpVec);
+        MyMath.copyVec(position, mPosition, 3);
+        MyMath.copyVec(frontVec, mFrontVec, 3);
+        MyMath.copyVec(upVec, mUpVec, 3);
+        MyMath.copyVec(MyMath.crossProduct(mFrontVec, mUpVec), mRightVec, 3);
     }
 
 

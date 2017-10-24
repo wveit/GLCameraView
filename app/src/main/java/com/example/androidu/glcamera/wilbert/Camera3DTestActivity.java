@@ -60,7 +60,6 @@ public class Camera3DTestActivity extends GLCameraActivity implements View.OnTou
 
     @Override
     public void GLDraw() {
-        invalidate();
 
         float angleChange = 1;
         float change = 0.2f;

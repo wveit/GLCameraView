@@ -65,8 +65,8 @@ public class MyMath {
 
     }
 
-    public static void copyVec(float[] src, float[] dest){
-        for(int i = 0; i < src.length; i++)
+    public static void copyVec(float[] src, float[] dest, int n){
+        for(int i = 0; i < n; i++)
             dest[i] = src[i];
     }
 
@@ -91,7 +91,6 @@ public class MyMath {
 
         float angle = MyMath.angle(xzCamera, xzMagnet);
         angle = MyMath.radToDegrees(angle);
-        Log.d(TAG, "angle: " + angle);
 
         float[] xproduct = MyMath.crossProduct(xzMagnet, xzCamera);
         float direction = MyMath.dotProduct(xproduct, gravityVec);
@@ -128,21 +127,20 @@ public class MyMath {
         azimuth = MyMath.degreesToRad(azimuth);
         elevation = MyMath.degreesToRad(elevation);
 
-        float[] t = {0, (float)Math.sin(elevation), -(float)Math.cos(elevation)};
+        float y = (float)Math.sin(elevation);
+        float groundMagnitude = (float)Math.cos(elevation);
+        float x = groundMagnitude * (float)Math.sin(azimuth);
+        float z = - groundMagnitude * (float)Math.cos(azimuth);
 
-        float[] directionVector = {
-                (float)Math.cos(azimuth) * t[0] + (float)Math.sin(azimuth) * t[2],
-                t[1],
-                -(float)Math.sin(azimuth) * t[0] + (float)Math.cos(azimuth) * t[2]
-        };
+        float[] directionVector = {x, y, z};
 
         return directionVector;
     }
 
-
-    public static float[] phoneVecToWorldVec(float[] gravityVec, float[] magnetVec, float[] phoneUpVec){
-        float azimuth = compassBearing(gravityVec, magnetVec, phoneUpVec);
-        float elevation = elevationAngle(gravityVec, phoneUpVec);
-        return directionVector(azimuth, elevation);
+    public static float[] phoneVecToWorldVec(float[] gravityVec, float[] magnetVec, float[] phoneVec){
+        float azimuth = compassBearing(gravityVec, magnetVec, phoneVec);
+        float elevation = elevationAngle(gravityVec, phoneVec);
+        float[] directionVector = directionVector(azimuth, elevation);
+        return directionVector;
     }
 }

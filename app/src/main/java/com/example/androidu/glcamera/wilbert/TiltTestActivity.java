@@ -74,7 +74,7 @@ public class TiltTestActivity extends AppCompatActivity {
     }
 
     private void onMagnet(SensorEvent event){
-        MyMath.copyVec(event.values, mMagnetVec);
+        MyMath.copyVec(event.values, mMagnetVec, 3);
         updateCalculatedValues();
         updateText();
     }
