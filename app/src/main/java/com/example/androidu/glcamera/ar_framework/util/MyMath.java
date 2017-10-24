@@ -1,14 +1,19 @@
 package com.example.androidu.glcamera.ar_framework.util;
 
+import android.util.Log;
+
 public class MyMath {
     private static final String TAG = "wakaMyMath";
 
     public static float[] crossProduct(float[] a, float[] b){
-        float[] c = new float[3];
+        float[] c = new float[a.length];
 
         c[0] = a[1] * b[2] - a[2] * b[1];
         c[1] = a[2] * b[0] - a[0] * b[2];
         c[2] = a[0] * b[1] - a[1] * b[0];
+
+        if(c.length == 4)
+            c[3] = a[3];
 
         return c;
     }
@@ -47,6 +52,26 @@ public class MyMath {
         return (float) (degrees / 360 * 2 * Math.PI);
     }
 
+    public static String vecToString(float[] vec){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Vec: (");
+        sb.append(String.format("% .2f", vec[0]));
+        for(int i = 1; i < vec.length; i++){
+            sb.append(", ");
+            sb.append(String.format("% .2f", vec[i]));
+        }
+        sb.append(")");
+        return sb.toString();
+
+    }
+
+    public static void copyVec(float[] src, float[] dest){
+        for(int i = 0; i < src.length; i++)
+            dest[i] = src[i];
+    }
+
+    /****************************************************/
+
     public static float compassBearing(float[] gravityVec, float[] magnetVec, float[] cameraVec){
         // Information we have:
         //  + gravityVec: A vector representing the direction and magnitude of gravity in camera coordinate system
@@ -66,6 +91,7 @@ public class MyMath {
 
         float angle = MyMath.angle(xzCamera, xzMagnet);
         angle = MyMath.radToDegrees(angle);
+        Log.d(TAG, "angle: " + angle);
 
         float[] xproduct = MyMath.crossProduct(xzMagnet, xzCamera);
         float direction = MyMath.dotProduct(xproduct, gravityVec);
@@ -76,24 +102,7 @@ public class MyMath {
             return 360 - angle;
     }
 
-    public static String vecToString(float[] vec){
-        StringBuilder sb = new StringBuilder();
-        sb.append("Vec: (");
-        sb.append(vec[0]);
-        for(int i = 1; i < vec.length; i++){
-            sb.append(", ");
-            sb.append(vec[i]);
-        }
-        sb.append(")");
-        return sb.toString();
-    }
-
-    public static void copyVec(float[] src, float[] dest){
-        for(int i = 0; i < src.length; i++)
-            dest[i] = src[i];
-    }
-
-    public static float landscapeTiltAngle(float[] gravityVec, float[] phoneUpVec){
+    public static float rollAngle(float[] gravityVec, float[] phoneUpVec){
         float[] xyGravityVec = {gravityVec[0], gravityVec[1], 0};
         float[] phoneFrontVec = {0, 0, -1};
         float unitDotProduct = dotProduct(phoneUpVec, xyGravityVec) / magnitude(xyGravityVec) / magnitude(phoneUpVec);
@@ -106,5 +115,34 @@ public class MyMath {
         }
         else
             return 360 - angle;
+    }
+
+    public static float elevationAngle(float[] gravityVec, float[] vector){
+        float unitDotProduct = dotProduct(vector, gravityVec) / magnitude(gravityVec) / magnitude(vector);
+        float angle = (float)Math.acos(unitDotProduct);
+        angle = radToDegrees(angle);
+        return angle - 90;
+    }
+
+    public static float[] directionVector(float azimuth, float elevation){
+        azimuth = MyMath.degreesToRad(azimuth);
+        elevation = MyMath.degreesToRad(elevation);
+
+        float[] t = {0, (float)Math.sin(elevation), -(float)Math.cos(elevation)};
+
+        float[] directionVector = {
+                (float)Math.cos(azimuth) * t[0] + (float)Math.sin(azimuth) * t[2],
+                t[1],
+                -(float)Math.sin(azimuth) * t[0] + (float)Math.cos(azimuth) * t[2]
+        };
+
+        return directionVector;
+    }
+
+
+    public static float[] phoneVecToWorldVec(float[] gravityVec, float[] magnetVec, float[] phoneUpVec){
+        float azimuth = compassBearing(gravityVec, magnetVec, phoneUpVec);
+        float elevation = elevationAngle(gravityVec, phoneUpVec);
+        return directionVector(azimuth, elevation);
     }
 }

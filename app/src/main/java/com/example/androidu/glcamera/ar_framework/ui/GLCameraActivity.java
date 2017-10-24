@@ -18,10 +18,15 @@
 package com.example.androidu.glcamera.ar_framework.ui;
 
 
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -36,16 +41,17 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class GLCameraActivity extends AppCompatActivity {
 
+    private static final String TAG = "wakaGLCamActivity";
+
     private FrameLayout mFrameLayout;
     private GLSurfaceView mGLView;
-    private CameraView mCameraView;
+    private MyCameraView mCameraView;
 
     private Model3D mTriangle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -66,7 +72,8 @@ public class GLCameraActivity extends AppCompatActivity {
 
 
         if(MyPermission.havePermission(this, MyPermission.PERMISSION_CAMERA)){
-            mCameraView = new CameraView(this);
+            mCameraView = new MyCameraView(this);
+            mCameraView.setWillNotDraw(false);
             mFrameLayout.addView(mCameraView);
         }
         else{
@@ -104,6 +111,11 @@ public class GLCameraActivity extends AppCompatActivity {
     public void GLDraw(){}
 
 
+    public void invalidate(){
+        mCameraView.postInvalidate();
+        mGLView.postInvalidate();
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -129,7 +141,23 @@ public class GLCameraActivity extends AppCompatActivity {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      MyCameraView
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public class MyCameraView extends CameraView{
+        public MyCameraView(Context context){
+            super(context);
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+            Log.d("TAG", "draw(canvas)");
+        }
+    }
 }
 
 

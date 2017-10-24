@@ -16,7 +16,14 @@
         android:theme="@style/AppTheme">
 
 
-        <activity android:name=".sample_app.MainActivity">
+        <activity
+            android:name=".wilbert.Camera3DTestActivity"
+            android:screenOrientation="landscape">
+        </activity>
+
+
+        <activity android:name=".wilbert.TiltTestActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

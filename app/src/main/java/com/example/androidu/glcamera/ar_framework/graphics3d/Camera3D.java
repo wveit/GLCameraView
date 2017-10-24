@@ -2,75 +2,109 @@ package com.example.androidu.glcamera.ar_framework.graphics3d;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.util.Log;
+
+import com.example.androidu.glcamera.ar_framework.util.MyMath;
 
 public class Camera3D {
+    private static final String TAG = "waka_Camera3D";
+    
+    private float[] mPosition = new float[]{0, 0, 2, 1};
+    private float[] mFrontVec = new float[]{0, 0, -1, 0};
+    private float[] mUpVec = new float[]{0, 1, 0, 0};
+    private float[] mRightVec = new float[]{1, 0, 0, 0};
 
-    float[] mViewMatrix = new float[16];
-    float[] mProjectionMatrix = new float[16];
-    float[] mVPMatrix = new float[16];
-    float[] mTranslation = new float[3];
-    float[] mRotation = new float[3];
-    float mViewAngleDegrees = 45;
+    private float[] mViewMatrix = new float[16];
+    private float[] mProjectionMatrix = new float[16];
+    private float[] mViewProjectionMatrix = new float[16];
 
-    public Camera3D(){
-        setTranslation(0, 0, 0);
-        setRotation(0, 0, 0);
+    private static final float[] tempMatrix = new float[16]; // used for calculations
+
+
+
+    public void set(float[] position, float[] frontVec, float[] upVec){
+
+        mPosition = position;
+        mFrontVec = frontVec;
+        mUpVec = upVec;
+        mRightVec = MyMath.crossProduct(mFrontVec, mUpVec);
     }
 
-    public void viewport(int width, int height){
-        GLES20.glViewport(0, 0, width, height);
-        float aspectRatio = (float)width / height;
-        Matrix.perspectiveM(mProjectionMatrix, 0, mViewAngleDegrees, aspectRatio, 0.01f, 20f);
+
+    public void updateViewMatrix(){
+
+        Matrix.setLookAtM(mViewMatrix, 0,
+                mPosition[0], mPosition[1], mPosition[2],
+                mPosition[0] + mFrontVec[0], mPosition[1] + mFrontVec[1], mPosition[2] + mFrontVec[2],
+                mUpVec[0], mUpVec[1], mUpVec[2]);
+
+        Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
     }
 
-    public void setTranslation(float x, float y, float z){
-        mTranslation[0] = x;
-        mTranslation[1] = y;
-        mTranslation[2] = z;
+
+    public void setPerspective(float viewAngle, float aspectRatio, float nearD, float farD){
+        Matrix.perspectiveM(mProjectionMatrix, 0, viewAngle, aspectRatio, nearD, farD);
+        Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
     }
 
-    public void translate(float dx, float dy, float dz){
-        mTranslation[0] += dx;
-        mTranslation[1] += dy;
-        mTranslation[2] += dz;
+
+    public void pitch(float angle){
+        Matrix.setRotateM(tempMatrix, 0, angle, mRightVec[0], mRightVec[1], mRightVec[2]);
+        Matrix.multiplyMV(mFrontVec, 0, tempMatrix, 0, mFrontVec, 0);
+        Matrix.multiplyMV(mUpVec, 0, tempMatrix, 0, mUpVec, 0);
     }
 
-    public void slide(float dx, float dy, float dz){
 
+    public void roll(float angle){
+        Matrix.setRotateM(tempMatrix, 0, angle, mFrontVec[0], mFrontVec[1], mFrontVec[2]);
+        Matrix.multiplyMV(mRightVec, 0, tempMatrix, 0, mRightVec, 0);
+        Matrix.multiplyMV(mUpVec, 0, tempMatrix, 0, mUpVec, 0);
     }
 
-    public void setRotation(float pitch, float roll, float yaw){
-        mRotation[0] = pitch;
-        mRotation[1] = roll;
-        mRotation[2] = roll;
+
+    public void yaw(float angle){
+        Matrix.setRotateM(tempMatrix, 0, angle, mUpVec[0], mUpVec[1], mUpVec[2]);
+        Matrix.multiplyMV(mFrontVec, 0, tempMatrix, 0, mFrontVec, 0);
+        Matrix.multiplyMV(mRightVec, 0, tempMatrix, 0, mRightVec, 0);
     }
 
-    public void rotate(float dPitch, float dRoll, float dYaw){
-        mRotation[0] += dPitch;
-        mRotation[1] += dRoll;
-        mRotation[2] += dYaw;
+
+    public void slide(float dRight, float dUp, float dFront){
+        mPosition[0] += dRight * mRightVec[0] + dUp * mUpVec[0] + dFront * mFrontVec[0];
+        mPosition[1] += dRight * mRightVec[1] + dUp * mUpVec[1] + dFront * mFrontVec[1];
+        mPosition[2] += dRight * mRightVec[2] + dUp * mUpVec[2] + dFront * mFrontVec[2];
+//        Log.d(TAG, "position: " + MyMath.vecToString(mFrontVec));
+//        Log.d(TAG, "dRight: " + dRight + "   dUp: " + dUp + "   dFront: " + dFront);
     }
+
+
+    public void move(float dX, float dY, float dZ){
+        mPosition[0] += dX;
+        mPosition[1] += dY;
+        mPosition[2] += dZ;
+    }
+
+
+    public void setPosition(float x, float y, float z){
+        mPosition[0] = x;
+        mPosition[1] = y;
+        mPosition[2] = z;
+    }
+
 
     public float[] getViewMatrix(){
-        Matrix.setLookAtM(mViewMatrix, 0,
-                mTranslation[0], mTranslation[1], mTranslation[2],
-                (float)Math.sin(degreeToRad(mRotation[1])), 0, (float)Math.cos(degreeToRad(mRotation[1])),
-                0, 1, 0);
-
         return mViewMatrix;
     }
 
-    public float degreeToRad(float degree){
-        return (float)(degree * 2 * Math.PI / 360);
-    }
 
     public float[] getProjectionMatrix(){
         return mProjectionMatrix;
     }
 
-    public float[] getVPMatrix(){
-        float[] viewMatrix = getViewMatrix();
-        Matrix.multiplyMM(mVPMatrix, 0, mProjectionMatrix, 0, viewMatrix, 0);
-        return mVPMatrix;
+
+    public float[] getViewProjectionMatrix(){
+        return mViewProjectionMatrix;
     }
+
+
 }
