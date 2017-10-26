@@ -60,7 +60,7 @@ public class Model3D {
         int colorUniform = GLES20.glGetUniformLocation(mShaderProgram, "vColor");
         GLES20.glUniform4fv(colorUniform, 1, mColor, 0);
 
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3); // 3 should be mNumVertices
 
         GLES20.glDisableVertexAttribArray(positionAttrib);
     }

@@ -8,6 +8,11 @@ import com.example.androidu.glcamera.ar_framework.util.MyMath;
 
 public class Camera3D {
     private static final String TAG = "waka_Camera3D";
+
+    private static final float[] INITIAL_POSITION = {0,0,0,1};
+    private static final float[] INITIAL_LOOK_VECTOR = {0,0,-1,0};
+    private static final float[] INITIAL_UP_VECTOR = {0,1,0,0};
+    private static final float[] INITIAL_RIGHT_VECTOR = {1,0,0,0};
     
     private float[] mPosition = new float[]{0, 0, 2, 1};
     private float[] mFrontVec = new float[]{0, 0, -1, 0};
@@ -20,14 +25,17 @@ public class Camera3D {
 
     private static final float[] tempMatrix = new float[16]; // used for calculations
 
-
+    public void setByMatrix(float[] matrix){
+        Matrix.multiplyMV(mFrontVec, 0, matrix, 0, INITIAL_LOOK_VECTOR, 0);
+        Matrix.multiplyMV(mUpVec, 0, matrix, 0, INITIAL_UP_VECTOR, 0);
+        Matrix.multiplyMV(mRightVec, 0, matrix, 0, INITIAL_RIGHT_VECTOR, 0);
+    }
 
     public void set(float[] position, float[] frontVec, float[] upVec){
-
-        MyMath.copyVec(position, mPosition, 3);
-        MyMath.copyVec(frontVec, mFrontVec, 3);
-        MyMath.copyVec(upVec, mUpVec, 3);
-        MyMath.copyVec(MyMath.crossProduct(mFrontVec, mUpVec), mRightVec, 3);
+        MyMath.copyVec(position, mPosition, 3);                                 mPosition[3] =  1;
+        MyMath.copyVec(frontVec, mFrontVec, 3);                                 mFrontVec[3] =  0;
+        MyMath.copyVec(upVec, mUpVec, 3);                                       mUpVec[3]    =  0;
+        MyMath.copyVec(MyMath.crossProduct(mFrontVec, mUpVec), mRightVec, 3);   mRightVec[3] =  0;
     }
 
 

@@ -18,18 +18,22 @@
 
         <activity
             android:name=".wilbert.Camera3DTestActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
 
 
         <activity
             android:name=".wilbert.TiltTestActivity"
-            android:screenOrientation="landscape">
-        </activity>
+            android:screenOrientation="landscape"></activity>
 
 
         <activity
             android:name=".wilbert.Compass3DActivity"
             android:screenOrientation="landscape">
+        </activity>
+
+
+        <activity android:name=".wilbert.GLTest"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -76,6 +76,7 @@ public class GLCameraActivity extends AppCompatActivity {
         else{
             MyPermission.requestPermission(this, MyPermission.PERMISSION_CAMERA);
         }
+
     }
 
 

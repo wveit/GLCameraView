@@ -70,6 +70,22 @@ public class MyMath {
             dest[i] = src[i];
     }
 
+    public static String matrixToString(float[] matrix, int m, int n){
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n======================================\n");
+
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                sb.append(String.format("  % .2f  ", matrix[i * n + j]));
+            }
+            sb.append("\n");
+        }
+
+        sb.append("======================================\n");
+
+        return sb.toString();
+    }
+
     /****************************************************/
 
     public static float compassBearing(float[] gravityVec, float[] magnetVec, float[] cameraVec){

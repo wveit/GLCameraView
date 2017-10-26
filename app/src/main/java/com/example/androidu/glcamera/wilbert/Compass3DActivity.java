@@ -1,6 +1,7 @@
 package com.example.androidu.glcamera.wilbert;
 
 import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
@@ -22,6 +23,7 @@ public class Compass3DActivity extends GLCameraActivity {
 
     MySensor mGravitySensor;
     MySensor mMagnetSensor;
+    MySensor mOrientationSensor;
     MyGps mGps;
 
     float[] mStartLocation = null;
@@ -34,9 +36,13 @@ public class Compass3DActivity extends GLCameraActivity {
     Entity3D mEast;
     Entity3D mWest;
 
+    float[] cameraMatrix = new float[16];
+
 
     float[] mMagnetVec = {0,1,0};
     float[] mGravityVec = {0,1,0};
+    float[] mOrientation = {0,0,0,0};
+
     float[] mPhoneFrontVec = {0,0,-1};
     float[] mPhoneUpVec = {1,0,0};
 
@@ -47,9 +53,15 @@ public class Compass3DActivity extends GLCameraActivity {
     float[] mModelMatrix = new float[16];
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        cameraMatrix[0] = 1;
+        cameraMatrix[4] = 1;
+        cameraMatrix[8] = 1;
+        cameraMatrix[12] = 1;
 
         if(!MyPermission.havePermission(this, MyPermission.PERMISSION_ACCESS_FINE_LOCATION)) {
             MyPermission.requestPermission(this, MyPermission.PERMISSION_ACCESS_FINE_LOCATION);
@@ -61,10 +73,16 @@ public class Compass3DActivity extends GLCameraActivity {
 
         mGravitySensor = new MySensor(this, MySensor.GRAVITY);
         mGravitySensor.addListener(mGravityListener);
+
         mMagnetSensor = new MySensor(this, MySensor.MAGNETIC_FIELD);
         mMagnetSensor.addListener(mMagnetListener);
+
         mGps = new MyGps(this);
         mGps.addListener(mGpsListener);
+
+        mOrientationSensor = new MySensor(this, MySensor.ROTATION_VECTOR);
+        mOrientationSensor.addListener(mOrientationListener);
+
     }
 
     @Override
@@ -72,6 +90,7 @@ public class Compass3DActivity extends GLCameraActivity {
         super.onPause();
         mGravitySensor.stop();
         mMagnetSensor.stop();
+        mOrientationSensor.stop();
         mGps.stop();
     }
 
@@ -80,6 +99,7 @@ public class Compass3DActivity extends GLCameraActivity {
         super.onResume();
         mGravitySensor.start();
         mMagnetSensor.start();
+        mOrientationSensor.start();
         mGps.start();
     }
 
@@ -100,8 +120,8 @@ public class Compass3DActivity extends GLCameraActivity {
         mWest = new Entity3D(); mWest.setModel(mSquareModel);
 
         Matrix.setIdentityM(mModelMatrix, 0);
-        Matrix.scaleM(mModelMatrix, 0, 8, 4, 1);
-        Matrix.translateM(mModelMatrix, 0, 0, 0, -20);
+        Matrix.scaleM(mModelMatrix, 0, 80, 40, 1);
+        Matrix.translateM(mModelMatrix, 0, 0, 0, -2000);
 
         float[] rotateMatrix = new float[16];
         Matrix.setRotateM(rotateMatrix, 0, 90, 0, -1, 0);
@@ -124,7 +144,7 @@ public class Compass3DActivity extends GLCameraActivity {
     public void GLResize(int width, int height) {
         super.GLResize(width, height);
         GLES20.glViewport(0, 0, width, height);
-        mCamera3D.setPerspective(60, (float)width / height, 0.1f, 1000);
+        mCamera3D.setPerspective(60, (float)width / height, 0.1f, 10000);
     }
 
     @Override
@@ -133,7 +153,8 @@ public class Compass3DActivity extends GLCameraActivity {
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-        mCamera3D.set(mPosition, mLookVec, mUpVec);
+//        mCamera3D.set(mPosition, mLookVec, mUpVec);
+        mCamera3D.setByMatrix(cameraMatrix);
         mCamera3D.updateViewMatrix();
 
         float[] matrix = mCamera3D.getViewProjectionMatrix();
@@ -145,7 +166,7 @@ public class Compass3DActivity extends GLCameraActivity {
         mWest.draw(matrix);
 //        mSquareModel.draw(matrix);
 
-        Log.d(TAG, String.format("Lat: %f    Lon: %f", mLocation[0], mLocation[1]));
+        Log.d(TAG, String.format("Orientation: [%f, %f, %f, %f]\n", mOrientation[0], mOrientation[1], mOrientation[2], mOrientation[3]));
     }
 
 
@@ -188,9 +209,18 @@ public class Compass3DActivity extends GLCameraActivity {
             mLocation[1] = (float) location.getLongitude();
             mLocation[2] = (float) location.getAltitude();
 
-//            mPosition[0] = (mLocation[1] - mStartLocation[1]) * 100000;
-//            mPosition[2] = (mStartLocation[0] - mLocation[0]) * 100000;
+            mPosition[0] = (mLocation[1] - mStartLocation[1]) * 100000;
+            mPosition[2] = (mStartLocation[0] - mLocation[0]) * 100000;
 
+        }
+    };
+
+    MySensor.Listener mOrientationListener = new MySensor.Listener(){
+
+        @Override
+        public void onSensorEvent(SensorEvent event) {
+            MyMath.copyVec(event.values, mOrientation, 4);
+            SensorManager.getRotationMatrixFromVector(cameraMatrix, event.values);
         }
     };
 
