@@ -12,8 +12,7 @@ import com.example.androidu.glcamera.ar_framework.util.MyMath;
 public class TiltTestActivity extends AppCompatActivity {
     private static final String TAG = "waka_TiltTestActivity";
 
-    private float landscapeRoll, landscapePitch, landscapeYaw;
-    private float portraitRoll, portraitPitch, portraitYaw;
+
 
     private float[] mMagnetVec = new float[]{0,0,0};
     private float[] mGravityVec = new float[]{0,0,0};

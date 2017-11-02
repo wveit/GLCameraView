@@ -77,6 +77,7 @@ public class GLCameraActivity extends AppCompatActivity {
             MyPermission.requestPermission(this, MyPermission.PERMISSION_CAMERA);
         }
 
+        mGLView.setZOrderMediaOverlay(true); // Ensures that mGLView shows up on top of mCameraView
     }
 
 
