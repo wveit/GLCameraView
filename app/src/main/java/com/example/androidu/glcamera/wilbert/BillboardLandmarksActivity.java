@@ -15,12 +15,17 @@ import com.example.androidu.glcamera.ar_framework.sensor.MyGps;
 import com.example.androidu.glcamera.ar_framework.sensor.MySensor;
 import com.example.androidu.glcamera.ar_framework.ui.GLCameraActivity;
 import com.example.androidu.glcamera.ar_framework.util.MyMath;
+import com.example.androidu.glcamera.landmark.Landmark;
+import com.example.androidu.glcamera.landmark.LandmarkTable;
+
+import java.util.ArrayList;
 
 
-public class BillboardActivity1 extends GLCameraActivity {
-    static final String TAG = "waka_BBA1";
+public class BillboardLandmarksActivity extends GLCameraActivity {
+    static final String TAG = "waka_BBLandmarks";
 
-    SizedBillboard mNorthBB, mEastBB, mSouthBB, mWestBB;
+    ArrayList<SizedBillboard> billboardList = null;
+    LandmarkTable landmarkTable = new LandmarkTable();
     Camera3D mCamera;
 
     MySensor mOrientation;
@@ -60,12 +65,8 @@ public class BillboardActivity1 extends GLCameraActivity {
 
         GLES20.glClearColor(0, 0, 0, 0);
 
-        SizedBillboard.init(this);
-        mNorthBB = BillboardMaker.make(this, 5, R.drawable.ara_icon, "North", "A compass direction");
-        mEastBB = BillboardMaker.make(this, 5, R.drawable.ara_icon, "East", "A compass direction");
-        mSouthBB = BillboardMaker.make(this, 5, R.drawable.ara_icon, "South", "A compass direction");
-        mWestBB = BillboardMaker.make(this, 5, R.drawable.ara_icon, "West", "A compass direction");
-        positionCompass();
+        if(landmarkTable.isEmpty())
+            landmarkTable.loadCities();
 
         mCamera = new Camera3D();
     }
@@ -86,7 +87,12 @@ public class BillboardActivity1 extends GLCameraActivity {
 
         mCamera.updateViewMatrix();
 
-        drawCompass();
+        if(latLonAlt == null)
+            return;
+        else if(billboardList == null)
+            setupBillboards();
+        else
+            drawBillboards();
     }
 
 
@@ -96,30 +102,56 @@ public class BillboardActivity1 extends GLCameraActivity {
     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void positionCompass(){
-        Matrix.setIdentityM(mNorthBB.getMatrix(), 0);
-        Matrix.translateM(mNorthBB.getMatrix(), 0, 0, 0, -10);
-        Matrix.setRotateM(scratchMatrix, 0, -90, 0, 1, 0);
+    private void setupBillboards(){
+        if(billboardList != null)
+            return;
 
-        Matrix.multiplyMM(mEastBB.getMatrix(), 0, scratchMatrix, 0, mNorthBB.getMatrix(), 0);
-        Matrix.multiplyMM(mSouthBB.getMatrix(), 0, scratchMatrix, 0, mEastBB.getMatrix(), 0);
-        Matrix.multiplyMM(mWestBB.getMatrix(), 0, scratchMatrix, 0, mSouthBB.getMatrix(), 0);
+        SizedBillboard.init(this);
+        billboardList = new ArrayList<>();
+        Landmark here = new Landmark("", "", latLonAlt[0], latLonAlt[1], 100);
+
+        int numLandmarks = landmarkTable.size();
+        for(int i = 0; i < numLandmarks; i++){
+            Landmark current = landmarkTable.get(i);
+            float distance = here.distance(current);
+            float angle = here.compassDirection(current);
+//            Log.d(TAG, current.title + "  distance: " + distance + "  angle: " + angle);
+
+            SizedBillboard currentBillboard = BillboardMaker.make(this, 5, R.drawable.ara_icon, current.title, current.description);
+            float[] matrix = currentBillboard.getMatrix();
+
+//            Matrix.setIdentityM(matrix, 0);
+//            Matrix.translateM(matrix, 0, 0, 0, -10 - distance * 0.00001f);
+//            Matrix.rotateM(matrix, 0, -angle, 0, 1, 0);
+
+            Matrix.setIdentityM(currentBillboard.getMatrix(), 0);
+            Matrix.translateM(currentBillboard.getMatrix(), 0, 0, 0, -10 - distance * 0.00001f);
+            Matrix.setIdentityM(scratchMatrix, 0);
+            Matrix.rotateM(scratchMatrix, 0, -angle, 0, 1, 0);
+            Matrix.multiplyMM(currentBillboard.getMatrix(), 0, scratchMatrix, 0, currentBillboard.getMatrix(), 0);
+
+            float[] vec = {0, 0, 0, 1};
+            float[] resultVec = new float[4];
+            Matrix.multiplyMV(resultVec, 0, currentBillboard.getMatrix(), 0, vec, 0);
+            Log.d(TAG, current.title + "  " + MyMath.vecToString(resultVec));
+
+            billboardList.add(currentBillboard);
+        }
     }
 
-    private void drawCompass(){
+    private void drawBillboards(){
 
-        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mNorthBB.getMatrix(), 0);
-        mNorthBB.draw(scratchMatrix);
+        int numBillboards = billboardList.size();
 
-        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mEastBB.getMatrix(), 0);
-        mEastBB.draw(scratchMatrix);
+//        Log.d(TAG, "drawing billboards: " + numBillboards);
 
-        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mSouthBB.getMatrix(), 0);
-        mSouthBB.draw(scratchMatrix);
-
-        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mWestBB.getMatrix(), 0);
-        mWestBB.draw(scratchMatrix);
+        for(int i = 0; i < numBillboards; i++){
+            SizedBillboard currentBB = billboardList.get(i);
+            Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, currentBB.getMatrix(), 0);
+            currentBB.draw(scratchMatrix);
+        }
     }
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -188,14 +220,18 @@ public class BillboardActivity1 extends GLCameraActivity {
 
     Location mOriginalLoc = null;
     float[] mPosition = new float[3];
+    float[] latLonAlt = null;
 
     MyGps.Listener mGPSListener = new MyGps.Listener() {
+
         @Override
         public void handleLocation(Location location) {
 
             if(mOriginalLoc == null){
                 mOriginalLoc = new Location(location);
+                latLonAlt = new float[3];
             }
+
 
             float distance = location.distanceTo(mOriginalLoc);
             float bearing = location.bearingTo(mOriginalLoc);
@@ -204,7 +240,14 @@ public class BillboardActivity1 extends GLCameraActivity {
             mPosition[1] = distance * (float)Math.sin(MyMath.degreesToRad(bearing));
             mPosition[2] = (float)(location.getAltitude() - mOriginalLoc.getAltitude());
 
-            Log.d(TAG, String.format("Position: [% .2f, % .2f, % .2f]\n", mPosition[0], mPosition[1], mPosition[2]));
+            latLonAlt[0] = (float)location.getLatitude();
+            latLonAlt[1] = (float)location.getLongitude();
+            latLonAlt[2] = (float)location.getAltitude();
+
+            Log.d(TAG, String.format("gps: [%f, %f, %f]\n", latLonAlt[0], latLonAlt[1], latLonAlt[2]));
         }
+
+
     };
+
 }
