@@ -4,7 +4,7 @@
 //      + How to hook up sensors to the camera class so that the camera moves when the device moves
 //      + How to make sure that a graphic will stay in the correct place on the screen
 
-package com.example.androidu.glcamera.wilbert;
+package com.example.androidu.glcamera.wilbert.oldactivities;
 
 import android.opengl.GLES20;
 import android.os.Bundle;

@@ -1,30 +1,32 @@
 package com.example.androidu.glcamera.wilbert;
 
 import android.hardware.SensorEvent;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.androidu.glcamera.R;
 import com.example.androidu.glcamera.ar_framework.graphics3d.Camera3D;
-import com.example.androidu.glcamera.ar_framework.graphics3d.Model3D;
-import com.example.androidu.glcamera.ar_framework.graphics3d.Square3D;
+import com.example.androidu.glcamera.ar_framework.graphics3d.billboard.BillboardMaker;
+import com.example.androidu.glcamera.ar_framework.graphics3d.billboard.SizedBillboard;
 import com.example.androidu.glcamera.ar_framework.sensor.MyGps;
 import com.example.androidu.glcamera.ar_framework.sensor.MySensor;
 import com.example.androidu.glcamera.ar_framework.ui.GLCameraActivity;
 import com.example.androidu.glcamera.ar_framework.util.MyMath;
 
-public class MountainActivity extends GLCameraActivity {
-    static final String TAG = "waka_GLTest";
 
-    Square3D mModel;
+public class BillboardActivity1 extends GLCameraActivity {
+    static final String TAG = "waka_BBA1";
+
+    SizedBillboard mNorthBB, mEastBB, mSouthBB, mWestBB;
     Camera3D mCamera;
 
     MySensor mOrientation;
     MyGps mGps;
+
+    float[] scratchMatrix = new float[16];
 
 
     @Override
@@ -58,8 +60,12 @@ public class MountainActivity extends GLCameraActivity {
 
         GLES20.glClearColor(0, 0, 0, 0);
 
-        mModel = new Square3D();
-        mModel.loadSquare();
+        SizedBillboard.init(this);
+        mNorthBB = BillboardMaker.make(this, 5, R.drawable.ara_icon, "North", "A compass direction");
+        mEastBB = BillboardMaker.make(this, 5, R.drawable.ara_icon, "East", "A compass direction");
+        mSouthBB = BillboardMaker.make(this, 5, R.drawable.ara_icon, "South", "A compass direction");
+        mWestBB = BillboardMaker.make(this, 5, R.drawable.ara_icon, "West", "A compass direction");
+        positionCompass();
 
         mCamera = new Camera3D();
     }
@@ -79,9 +85,8 @@ public class MountainActivity extends GLCameraActivity {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
         mCamera.updateViewMatrix();
-        float[] VPMatrix = mCamera.getViewProjectionMatrix();
 
-        drawCompass(VPMatrix);
+        drawCompass();
     }
 
 
@@ -91,45 +96,30 @@ public class MountainActivity extends GLCameraActivity {
     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void drawCompass(float[] VPMatrix){
-        float[] MVPMatrix = new float[16];
+    private void positionCompass(){
+        Matrix.setIdentityM(mNorthBB.getMatrix(), 0);
+        Matrix.translateM(mNorthBB.getMatrix(), 0, 0, 0, -10);
+        Matrix.setRotateM(scratchMatrix, 0, -90, 0, 1, 0);
 
-        float[] modelMatrix = new float[16];
-        Matrix.setIdentityM(modelMatrix, 0);
-        Matrix.scaleM(modelMatrix, 0, modelMatrix, 0, 4, 2, 1);
-        Matrix.translateM(modelMatrix, 0, 0, 0, -20);
-
-        float[] rotationMatrix = new float[16];
-        Matrix.setRotateM(rotationMatrix, 0, 90, 0, -1, 0);
-        float[] color = {1, 0, 0, 1};
-
-        Matrix.multiplyMM(MVPMatrix, 0, VPMatrix, 0, modelMatrix, 0);
-        mModel.setColor(color);
-        mModel.draw(MVPMatrix);
-
-        Matrix.multiplyMM(modelMatrix, 0, rotationMatrix, 0, modelMatrix, 0);
-        Matrix.multiplyMM(MVPMatrix, 0, VPMatrix, 0, modelMatrix, 0);
-        color[0] = 0;
-        color[1] = 1;
-        mModel.setColor(color);
-        mModel.draw(MVPMatrix);
-
-        Matrix.multiplyMM(modelMatrix, 0, rotationMatrix, 0, modelMatrix, 0);
-        Matrix.multiplyMM(MVPMatrix, 0, VPMatrix, 0, modelMatrix, 0);
-        color[1] = 0;
-        color[2] = 1;
-        mModel.setColor(color);
-        mModel.draw(MVPMatrix);
-
-        Matrix.multiplyMM(modelMatrix, 0, rotationMatrix, 0, modelMatrix, 0);
-        Matrix.multiplyMM(MVPMatrix, 0, VPMatrix, 0, modelMatrix, 0);
-        color[0] = 1;
-        mModel.setColor(color);
-        mModel.draw(MVPMatrix);
-
-
+        Matrix.multiplyMM(mEastBB.getMatrix(), 0, scratchMatrix, 0, mNorthBB.getMatrix(), 0);
+        Matrix.multiplyMM(mSouthBB.getMatrix(), 0, scratchMatrix, 0, mEastBB.getMatrix(), 0);
+        Matrix.multiplyMM(mWestBB.getMatrix(), 0, scratchMatrix, 0, mSouthBB.getMatrix(), 0);
     }
 
+    private void drawCompass(){
+
+        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mNorthBB.getMatrix(), 0);
+        mNorthBB.draw(scratchMatrix);
+
+        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mEastBB.getMatrix(), 0);
+        mEastBB.draw(scratchMatrix);
+
+        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mSouthBB.getMatrix(), 0);
+        mSouthBB.draw(scratchMatrix);
+
+        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mWestBB.getMatrix(), 0);
+        mWestBB.draw(scratchMatrix);
+    }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -158,11 +148,9 @@ public class MountainActivity extends GLCameraActivity {
             rVec[1] /= magnitude;
             rVec[2] /= magnitude;
             float angle = MyMath.radToDegrees(2 * (float)Math.asin(magnitude));
-//            Log.d(TAG, String.format("[% .2f, % .2f, % .2f]   % .2f\n", rVec[0], rVec[1], rVec[2], angle));
 
 
             Matrix.setRotateM(matrix, 0, angle, rVec[0], rVec[1], rVec[2]);
-//            Matrix.setRotateM(matrix, 0, angle, rVec[0], -rVec[2], rVec[1]);
 
 
             float[] adjustMatrix = new float[16];
@@ -177,11 +165,9 @@ public class MountainActivity extends GLCameraActivity {
             rVec[1] /= magnitude;
             rVec[2] /= magnitude;
             float angle = MyMath.radToDegrees(2 * (float)Math.asin(magnitude));
-//            Log.d(TAG, String.format("[% .2f, % .2f, % .2f]   % .2f\n", rVec[0], rVec[1], rVec[2], angle));
 
 
             Matrix.setRotateM(matrix, 0, angle, rVec[0], rVec[1], rVec[2]);
-//            Matrix.setRotateM(matrix, 0, angle, rVec[0], -rVec[2], rVec[1]);
 
 
             float[] adjustMatrix = new float[16];

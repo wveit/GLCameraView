@@ -1,4 +1,4 @@
-package com.example.androidu.glcamera.wilbert;
+package com.example.androidu.glcamera.wilbert.oldactivities;
 
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;

@@ -1,4 +1,4 @@
-package com.example.androidu.glcamera.wilbert;
+package com.example.androidu.glcamera.wilbert.oldactivities;
 
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
@@ -11,15 +11,16 @@ import android.util.Log;
 
 import com.example.androidu.glcamera.ar_framework.graphics3d.Camera3D;
 import com.example.androidu.glcamera.ar_framework.graphics3d.Model3D;
+import com.example.androidu.glcamera.ar_framework.graphics3d.Square3D;
 import com.example.androidu.glcamera.ar_framework.sensor.MyGps;
 import com.example.androidu.glcamera.ar_framework.sensor.MySensor;
 import com.example.androidu.glcamera.ar_framework.ui.GLCameraActivity;
 import com.example.androidu.glcamera.ar_framework.util.MyMath;
 
-public class GLTest extends GLCameraActivity {
+public class MountainActivity extends GLCameraActivity {
     static final String TAG = "waka_GLTest";
 
-    Model3D mModel;
+    Square3D mModel;
     Camera3D mCamera;
 
     MySensor mOrientation;
@@ -57,7 +58,7 @@ public class GLTest extends GLCameraActivity {
 
         GLES20.glClearColor(0, 0, 0, 0);
 
-        mModel = new Model3D();
+        mModel = new Square3D();
         mModel.loadSquare();
 
         mCamera = new Camera3D();
@@ -140,15 +141,12 @@ public class GLTest extends GLCameraActivity {
         @Override
         public void onSensorEvent(SensorEvent event) {
 
-
-
             float[] matrix = new float[16];
             portraitMatrixFromRotation(matrix, event.values);
 
             if(mCamera != null){
                 mCamera.setByMatrix(matrix);
             }
-
 
         }
 
