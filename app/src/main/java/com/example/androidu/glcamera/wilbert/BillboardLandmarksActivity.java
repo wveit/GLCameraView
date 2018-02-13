@@ -6,6 +6,7 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.androidu.glcamera.R;
 import com.example.androidu.glcamera.ar_framework.graphics3d.Camera3D;
@@ -32,6 +33,7 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
     MyGps mGps;
 
     float[] scratchMatrix = new float[16];
+    boolean billboardLoadingComplete = false;
 
 
     @Override
@@ -66,7 +68,7 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
         GLES20.glClearColor(0, 0, 0, 0);
 
         if(landmarkTable.isEmpty())
-            landmarkTable.loadCities();
+            landmarkTable.loadCalstateLA();
 
         mCamera = new Camera3D();
     }
@@ -111,18 +113,14 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
         Landmark here = new Landmark("", "", latLonAlt[0], latLonAlt[1], 100);
 
         int numLandmarks = landmarkTable.size();
+        Log.d(TAG, "num landmarks: " + numLandmarks);
         for(int i = 0; i < numLandmarks; i++){
             Landmark current = landmarkTable.get(i);
             float distance = here.distance(current);
             float angle = here.compassDirection(current);
-//            Log.d(TAG, current.title + "  distance: " + distance + "  angle: " + angle);
 
             SizedBillboard currentBillboard = BillboardMaker.make(this, 5, R.drawable.ara_icon, current.title, current.description);
             float[] matrix = currentBillboard.getMatrix();
-
-//            Matrix.setIdentityM(matrix, 0);
-//            Matrix.translateM(matrix, 0, 0, 0, -10 - distance * 0.00001f);
-//            Matrix.rotateM(matrix, 0, -angle, 0, 1, 0);
 
             Matrix.setIdentityM(currentBillboard.getMatrix(), 0);
             Matrix.translateM(currentBillboard.getMatrix(), 0, 0, 0, -10 - distance * 0.00001f);
@@ -137,13 +135,36 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
 
             billboardList.add(currentBillboard);
         }
+
+        billboardLoadingComplete = true;
+    }
+
+    private void updateBillboards(){
+        if(billboardList == null || !billboardLoadingComplete)
+            return;
+
+        Landmark here = new Landmark("", "", latLonAlt[0], latLonAlt[1], 100);
+
+        int numLandmarks = landmarkTable.size();
+        for(int i = 0; i < numLandmarks; i++){
+            Landmark current = landmarkTable.get(i);
+            float distance = here.distance(current);
+            float angle = here.compassDirection(current);
+
+            SizedBillboard currentBillboard = billboardList.get(i);
+            float[] matrix = currentBillboard.getMatrix();
+
+            Matrix.setIdentityM(currentBillboard.getMatrix(), 0);
+            Matrix.translateM(currentBillboard.getMatrix(), 0, 0, 0, -10 - distance * 0.00001f);
+            Matrix.setIdentityM(scratchMatrix, 0);
+            Matrix.rotateM(scratchMatrix, 0, -angle, 0, 1, 0);
+            Matrix.multiplyMM(currentBillboard.getMatrix(), 0, scratchMatrix, 0, currentBillboard.getMatrix(), 0);
+        }
     }
 
     private void drawBillboards(){
 
         int numBillboards = billboardList.size();
-
-//        Log.d(TAG, "drawing billboards: " + numBillboards);
 
         for(int i = 0; i < numBillboards; i++){
             SizedBillboard currentBB = billboardList.get(i);
@@ -231,8 +252,7 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
                 mOriginalLoc = new Location(location);
                 latLonAlt = new float[3];
             }
-
-
+            
             float distance = location.distanceTo(mOriginalLoc);
             float bearing = location.bearingTo(mOriginalLoc);
 
@@ -244,7 +264,8 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
             latLonAlt[1] = (float)location.getLongitude();
             latLonAlt[2] = (float)location.getAltitude();
 
-            Log.d(TAG, String.format("gps: [%f, %f, %f]\n", latLonAlt[0], latLonAlt[1], latLonAlt[2]));
+            Toast.makeText(BillboardLandmarksActivity.this, String.format("gps position: [%f, %f, %f]\n", mPosition[0], mPosition[1], mPosition[2]), Toast.LENGTH_LONG).show();
+            updateBillboards();
         }
 
 
