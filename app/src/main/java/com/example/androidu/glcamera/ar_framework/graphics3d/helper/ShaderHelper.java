@@ -23,7 +23,7 @@ public class ShaderHelper {
             return 0;
         }
         else{
-            Log.d(TAG, "Vertex Shader Good");
+            //Log.d(TAG, "Vertex Shader Good");
             return shader;
         }
     }
@@ -43,7 +43,7 @@ public class ShaderHelper {
             return 0;
         }
         else{
-            Log.d(TAG, "Program Link Good");
+            //Log.d(TAG, "Program Link Good");
             return program;
         }
     }

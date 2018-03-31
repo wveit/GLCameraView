@@ -36,6 +36,8 @@ public class LandmarkTable extends ArrayList<Landmark>{
         add(new Landmark("Annenberg Science Building  ", "CalstateLA Facility", 34.064836f, -118.168130f, 100.0f));
         add(new Landmark("Tennis Courts  ", "CalstateLA Facility", 34.063847f, -118.166313f, 100.0f));
         add(new Landmark("Fine Arts Building  ", "CalstateLA Facility", 34.067204f, -118.166618f, 100.0f));
+        add(new Landmark("Well # 1  ", "A Well", 34.092500f, -118.130400f, 100.0f));
+        //add(new Landmark("Ivan's House  ", "A nice place to go", 34.099525f, -118.128581f, 100.0f));
     }
 
     public void loadCities(){

@@ -70,6 +70,8 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
         if(landmarkTable.isEmpty())
             landmarkTable.loadCalstateLA();
 
+        //billboardList = null;
+
         mCamera = new Camera3D();
     }
 
@@ -113,7 +115,7 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
         Landmark here = new Landmark("", "", latLonAlt[0], latLonAlt[1], 100);
 
         int numLandmarks = landmarkTable.size();
-        Log.d(TAG, "num landmarks: " + numLandmarks);
+        //Log.d(TAG, "num landmarks: " + numLandmarks);
         for(int i = 0; i < numLandmarks; i++){
             Landmark current = landmarkTable.get(i);
             float distance = here.distance(current);
@@ -131,7 +133,7 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
             float[] vec = {0, 0, 0, 1};
             float[] resultVec = new float[4];
             Matrix.multiplyMV(resultVec, 0, currentBillboard.getMatrix(), 0, vec, 0);
-            Log.d(TAG, current.title + "  " + MyMath.vecToString(resultVec));
+            //Log.d(TAG, current.title + "  " + MyMath.vecToString(resultVec));
 
             billboardList.add(currentBillboard);
         }
@@ -252,7 +254,7 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
                 mOriginalLoc = new Location(location);
                 latLonAlt = new float[3];
             }
-            
+
             float distance = location.distanceTo(mOriginalLoc);
             float bearing = location.bearingTo(mOriginalLoc);
 
