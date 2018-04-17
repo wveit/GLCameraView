@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.Matrix;
 
-public class SizedBillboard {
+import com.example.androidu.glcamera.ar_framework.graphics3d.Drawable;
+
+public class SizedBillboard extends Drawable{
 
     Billboard mBillboard = new Billboard();
     float mScale = 1;
@@ -36,10 +38,13 @@ public class SizedBillboard {
 
     }
 
+    @Override
     public void draw(float[] matrix){
         Matrix.multiplyMM(mMatrix, 0, matrix, 0, mScaleMatrix, 0);
         mBillboard.draw(mMatrix);
     }
+
+
 
     public float[] getMatrix(){
         return mBillboard.getMatrix();

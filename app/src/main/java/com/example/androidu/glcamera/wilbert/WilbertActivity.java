@@ -12,6 +12,7 @@ public class WilbertActivity extends AppCompatActivity {
 
     Button compassButton;
     Button landmarksButton;
+    Button shapeDrawingButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +21,7 @@ public class WilbertActivity extends AppCompatActivity {
 
         compassButton = (Button)findViewById(R.id.btn_billboard_compass);
         landmarksButton = (Button)findViewById(R.id.btn_landmarks);
+        shapeDrawingButton = (Button)findViewById(R.id.btn_shape_draw);
 
         compassButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,6 +35,14 @@ public class WilbertActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(WilbertActivity.this, BillboardLandmarksActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        shapeDrawingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WilbertActivity.this, ShapeDrawActivity.class);
                 startActivity(intent);
             }
         });

@@ -1,8 +1,6 @@
 package com.example.androidu.glcamera.ar_framework.graphics3d;
 
-import android.opengl.GLES20;
 import android.opengl.Matrix;
-import android.util.Log;
 
 import com.example.androidu.glcamera.ar_framework.util.MyMath;
 
@@ -10,7 +8,7 @@ public class Camera3D {
     private static final String TAG = "waka_Camera3D";
 
     private static final float[] INITIAL_POSITION = {0,0,0,1};
-    private static final float[] INITIAL_LOOK_VECTOR = {0,0,-1,0};
+    private static final float[] INITIAL_FRONT_VECTOR = {0,0,-1,0};
     private static final float[] INITIAL_UP_VECTOR = {0,1,0,0};
     private static final float[] INITIAL_RIGHT_VECTOR = {1,0,0,0};
     
@@ -25,8 +23,8 @@ public class Camera3D {
 
     private static final float[] tempMatrix = new float[16]; // used for calculations
 
-    public void setByMatrix(float[] matrix){
-        Matrix.multiplyMV(mFrontVec, 0, matrix, 0, INITIAL_LOOK_VECTOR, 0);
+    public void setRotationByMatrix(float[] matrix){
+        Matrix.multiplyMV(mFrontVec, 0, matrix, 0, INITIAL_FRONT_VECTOR, 0);
         Matrix.multiplyMV(mUpVec, 0, matrix, 0, INITIAL_UP_VECTOR, 0);
         Matrix.multiplyMV(mRightVec, 0, matrix, 0, INITIAL_RIGHT_VECTOR, 0);
     }
@@ -81,8 +79,6 @@ public class Camera3D {
         mPosition[0] += dRight * mRightVec[0] + dUp * mUpVec[0] + dFront * mFrontVec[0];
         mPosition[1] += dRight * mRightVec[1] + dUp * mUpVec[1] + dFront * mFrontVec[1];
         mPosition[2] += dRight * mRightVec[2] + dUp * mUpVec[2] + dFront * mFrontVec[2];
-//        Log.d(TAG, "position: " + MyMath.vecToString(mFrontVec));
-//        Log.d(TAG, "dRight: " + dRight + "   dUp: " + dUp + "   dFront: " + dFront);
     }
 
 

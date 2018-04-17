@@ -6,34 +6,63 @@ import android.opengl.Matrix;
 import com.example.androidu.glcamera.ar_framework.util.MyMath;
 
 public class Entity3D {
-    private Model3D mModel = null;
+
+    private Drawable mDrawable = null;
     private float[] mModelMatrix = new float[16];
-    private float[] mMVPMatrix = new float[16];
-    private float[] mColor = {0, 1, 0, 1};
 
     public Entity3D(){
         Matrix.setIdentityM(mModelMatrix, 0);
     }
 
-    public void setModel(Model3D model){
-        mModel = model;
+    public void setIdentity(){
+        Matrix.setIdentityM(mModelMatrix, 0);
     }
 
-    public void setModelMatrix(float[] matrix){
-        MyMath.copyVec(matrix, mModelMatrix, 16);
+    public void scale(float scale){
+        Matrix.scaleM(mModelMatrix, 0, scale, scale, scale);
     }
 
-    public float[] getModelMatrix(){
-        return mModelMatrix;
+    public void translate(float dx, float dy, float dz){
+//        Matrix.translateM(mModelMatrix, 0, dx, dy, dz);
+        float[] translateMatrix = new float[16];
+        Matrix.setIdentityM(translateMatrix, 0);
+        Matrix.translateM(translateMatrix, 0, dx, dy, dz);
+        Matrix.multiplyMM(mModelMatrix, 0, translateMatrix, 0, mModelMatrix, 0);
     }
 
-    public void setColor(float[] color){
-        mColor = color;
+    public void rotate(float angle, float x, float y, float z){
+//        Matrix.rotateM(mModelMatrix, 0, angle, x, y, z);
+        float[] rotationMatrix = new float[16];
+        Matrix.setIdentityM(rotationMatrix, 0);
+        Matrix.rotateM(rotationMatrix, 0, angle, x, y, z);
+        Matrix.multiplyMM(mModelMatrix, 0, rotationMatrix, 0, mModelMatrix, 0);
     }
 
-    public void draw(float[] VPMatrix){
-        Matrix.multiplyMM(mMVPMatrix, 0, VPMatrix, 0, mModelMatrix, 0);
-        mModel.setColor(mColor);
-        mModel.draw(mMVPMatrix);
+    /* implement these 5 functions eventually */
+    public void set(float[] position, float[] frontVec, float[] upVec){}
+    public void slide(float[] xyz){}
+    public void pitch(float angle){}
+    public void roll(float angle){}
+    public void yaw(float angle){}
+
+
+    public float[] getModelMatrix(){return mModelMatrix;}
+
+    public void setDrawable(Drawable drawable){
+        mDrawable = drawable;
+    }
+
+    public void draw(float[] matrix){
+        if(mDrawable == null)
+            return;
+
+        mDrawable.draw(matrix);
+    }
+
+    public void draw(float[] projectionMatrix, float[] viewMatrix, float[] modelMatrix){
+        if(mDrawable == null)
+            return;
+
+        mDrawable.draw(projectionMatrix, viewMatrix, getModelMatrix());
     }
 }

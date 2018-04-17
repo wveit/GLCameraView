@@ -20,4 +20,10 @@
         android:text="Landmarks"
         android:id="@+id/btn_landmarks"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Shape Drawing"
+        android:id="@+id/btn_shape_draw"/>
+
 </LinearLayout>

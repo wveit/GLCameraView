@@ -5,7 +5,6 @@ import android.location.Location;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.androidu.glcamera.R;
@@ -190,7 +189,7 @@ public class BillboardLandmarksActivity extends GLCameraActivity {
             portraitMatrixFromRotation(matrix, event.values);
 
             if(mCamera != null){
-                mCamera.setByMatrix(matrix);
+                mCamera.setRotationByMatrix(matrix);
             }
 
         }

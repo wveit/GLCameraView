@@ -135,7 +135,7 @@ public class BillboardCompassActivity extends GLCameraActivity {
             portraitMatrixFromRotation(matrix, event.values);
 
             if(mCamera != null){
-                mCamera.setByMatrix(matrix);
+                mCamera.setRotationByMatrix(matrix);
             }
 
         }

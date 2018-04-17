@@ -33,6 +33,10 @@
             android:name=".wilbert.BillboardLandmarksActivity"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".wilbert.ShapeDrawActivity"
+            android:screenOrientation="portrait"/>
+
 
 
     </application>
