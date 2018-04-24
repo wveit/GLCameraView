@@ -1,8 +1,6 @@
 package com.example.androidu.glcamera.ar_framework.util;
 
-import android.util.Log;
-
-public class MyMath {
+public class VectorMath {
     private static final String TAG = "wakaMyMath";
 
     public static float[] crossProduct(float[] a, float[] b){
@@ -16,6 +14,16 @@ public class MyMath {
             c[3] = a[3];
 
         return c;
+    }
+    
+    public static void crossProduct(float[] result, float[] a, float[] b){
+
+        result[0] = a[1] * b[2] - a[2] * b[1];
+        result[1] = a[2] * b[0] - a[0] * b[2];
+        result[2] = a[0] * b[1] - a[1] * b[0];
+
+        if(result.length == 4)
+            result[3] = a[3];
     }
 
     public static float dotProduct(float[] a, float[] b){
@@ -42,6 +50,13 @@ public class MyMath {
         temp[2] = vec[2] / mag;
 
         return temp;
+    }
+
+    public static void normalizeInPlace(float[] vec){
+        float mag = magnitude(vec);
+        vec[0] = vec[0] / mag;
+        vec[1] = vec[1] / mag;
+        vec[2] = vec[2] / mag;
     }
 
     public static float radToDegrees(float radians){
@@ -99,17 +114,17 @@ public class MyMath {
         //  * Project cameraVec onto earth's xz plane -> xzCamera
         //  * Use dot product to find angle between xzMagnet and xzCamera
 
-        float[] xzTemp = MyMath.crossProduct(magnetVec, gravityVec);
-        float[] xzMagnet = MyMath.crossProduct(gravityVec, xzTemp);
+        float[] xzTemp = VectorMath.crossProduct(magnetVec, gravityVec);
+        float[] xzMagnet = VectorMath.crossProduct(gravityVec, xzTemp);
 
-        xzTemp = MyMath.crossProduct(cameraVec, gravityVec);
-        float[] xzCamera = MyMath.crossProduct(gravityVec, xzTemp);
+        xzTemp = VectorMath.crossProduct(cameraVec, gravityVec);
+        float[] xzCamera = VectorMath.crossProduct(gravityVec, xzTemp);
 
-        float angle = MyMath.angle(xzCamera, xzMagnet);
-        angle = MyMath.radToDegrees(angle);
+        float angle = VectorMath.angle(xzCamera, xzMagnet);
+        angle = VectorMath.radToDegrees(angle);
 
-        float[] xproduct = MyMath.crossProduct(xzMagnet, xzCamera);
-        float direction = MyMath.dotProduct(xproduct, gravityVec);
+        float[] xproduct = VectorMath.crossProduct(xzMagnet, xzCamera);
+        float direction = VectorMath.dotProduct(xproduct, gravityVec);
 
         if(direction >=0)
             return angle;
@@ -140,8 +155,8 @@ public class MyMath {
     }
 
     public static float[] directionVector(float azimuth, float elevation){
-        azimuth = MyMath.degreesToRad(azimuth);
-        elevation = MyMath.degreesToRad(elevation);
+        azimuth = VectorMath.degreesToRad(azimuth);
+        elevation = VectorMath.degreesToRad(elevation);
 
         float y = (float)Math.sin(elevation);
         float groundMagnitude = (float)Math.cos(elevation);

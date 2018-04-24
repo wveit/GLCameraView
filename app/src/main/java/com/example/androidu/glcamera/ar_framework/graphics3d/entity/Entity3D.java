@@ -1,26 +1,39 @@
-package com.example.androidu.glcamera.ar_framework.graphics3d;
+package com.example.androidu.glcamera.ar_framework.graphics3d.entity;
 
 
 import android.opengl.Matrix;
 
-import com.example.androidu.glcamera.ar_framework.util.MyMath;
+import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.Drawable;
+import com.example.androidu.glcamera.ar_framework.util.GeoMath;
 
 public class Entity3D {
 
     private Drawable mDrawable = null;
     private float[] mModelMatrix = new float[16];
 
+
     public Entity3D(){
         Matrix.setIdentityM(mModelMatrix, 0);
     }
 
-    public void setIdentity(){
+
+    public void setLatLonAlt(float[] latLonAlt){
+        reset();
+        float[] xyz = new float[3];
+        GeoMath.latLonAltToXYZ(latLonAlt, xyz);
+        translate(xyz[0], xyz[1], xyz[2]);
+    }
+
+
+    public void reset(){
         Matrix.setIdentityM(mModelMatrix, 0);
     }
+
 
     public void scale(float scale){
         Matrix.scaleM(mModelMatrix, 0, scale, scale, scale);
     }
+
 
     public void translate(float dx, float dy, float dz){
 //        Matrix.translateM(mModelMatrix, 0, dx, dy, dz);
@@ -30,6 +43,7 @@ public class Entity3D {
         Matrix.multiplyMM(mModelMatrix, 0, translateMatrix, 0, mModelMatrix, 0);
     }
 
+
     public void rotate(float angle, float x, float y, float z){
 //        Matrix.rotateM(mModelMatrix, 0, angle, x, y, z);
         float[] rotationMatrix = new float[16];
@@ -37,6 +51,7 @@ public class Entity3D {
         Matrix.rotateM(rotationMatrix, 0, angle, x, y, z);
         Matrix.multiplyMM(mModelMatrix, 0, rotationMatrix, 0, mModelMatrix, 0);
     }
+
 
     /* implement these 5 functions eventually */
     public void set(float[] position, float[] frontVec, float[] upVec){}
@@ -48,9 +63,11 @@ public class Entity3D {
 
     public float[] getModelMatrix(){return mModelMatrix;}
 
+
     public void setDrawable(Drawable drawable){
         mDrawable = drawable;
     }
+
 
     public void draw(float[] matrix){
         if(mDrawable == null)
@@ -59,10 +76,16 @@ public class Entity3D {
         mDrawable.draw(matrix);
     }
 
+
     public void draw(float[] projectionMatrix, float[] viewMatrix, float[] modelMatrix){
         if(mDrawable == null)
             return;
 
         mDrawable.draw(projectionMatrix, viewMatrix, getModelMatrix());
+    }
+
+
+    public float[] getPosition(){
+        return new float[]{0, 0, 0};
     }
 }

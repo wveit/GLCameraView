@@ -9,7 +9,7 @@ import android.hardware.SensorManager;
 
 import java.util.ArrayList;
 
-public class MySensor {
+public class ARSensor {
 
     public static final int LINEAR_ACCELERATION = Sensor.TYPE_LINEAR_ACCELERATION;
     public static final int GRAVITY = Sensor.TYPE_GRAVITY;
@@ -21,7 +21,7 @@ public class MySensor {
     private Sensor mSensor;
     private ArrayList<Listener> mListenerList = new ArrayList<Listener>();
 
-    public MySensor(Context context, int sensorCode){
+    public ARSensor(Context context, int sensorCode){
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(sensorCode);
     }

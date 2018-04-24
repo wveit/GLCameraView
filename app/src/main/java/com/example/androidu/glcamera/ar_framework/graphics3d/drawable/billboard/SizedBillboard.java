@@ -1,10 +1,10 @@
-package com.example.androidu.glcamera.ar_framework.graphics3d.billboard;
+package com.example.androidu.glcamera.ar_framework.graphics3d.drawable.billboard;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.Matrix;
 
-import com.example.androidu.glcamera.ar_framework.graphics3d.Drawable;
+import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.Drawable;
 
 public class SizedBillboard extends Drawable{
 

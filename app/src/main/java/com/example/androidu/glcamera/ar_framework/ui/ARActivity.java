@@ -2,14 +2,14 @@
 //  draw on top of it using OpenGL calls.
 
 // How to use:
-//  + Make an Activity class that inherits from GLCameraActivity
+//  + Make an Activity class that inherits from ARActivity
 //  + Make sure to add Activity entry to Manifest
 //  + Override GLInit(), GLDraw() and GLResize(int, int) methods as desired for doing openGL calls
 //  + Use GLES20 class for your openGL calls, since this class currently only supports OpenGL ES 2
 //  + If you want to place some Android UI Elements on top of the Camera and GL drawing, do the
 //    following steps in your onCreate() method:
 //      * Create the UI Elements you want and put them in a ViewGroup object
-//      * Call the getTopFrameLayout() function to get GLCameraActivity's FrameLayout
+//      * Call the getTopFrameLayout() function to get ARActivity's FrameLayout
 //      * Add your ViewGroup object to the FrameLayout
 //  + Use the <android:screenOrientation=""> tag in the Manifest to control the Orientation of this
 //    Activity.
@@ -18,20 +18,14 @@
 package com.example.androidu.glcamera.ar_framework.ui;
 
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.example.androidu.glcamera.ar_framework.graphics3d.Model3D;
 import com.example.androidu.glcamera.ar_framework.util.MyPermission;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -39,7 +33,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 
-public class GLCameraActivity extends AppCompatActivity {
+public class ARActivity extends AppCompatActivity {
 
     private static final String TAG = "wakaGLCamActivity";
 

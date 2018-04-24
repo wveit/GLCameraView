@@ -16,13 +16,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
-public class MyGps {
+public class ARGps {
     private static final int PERMISSION_REQUEST_CODE = 79;
     private Activity mActivity;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private ArrayList<Listener> mListenerList = new ArrayList<Listener>();
 
-    public MyGps(Activity activity){
+    public ARGps(Activity activity){
         mActivity = activity;
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
     }

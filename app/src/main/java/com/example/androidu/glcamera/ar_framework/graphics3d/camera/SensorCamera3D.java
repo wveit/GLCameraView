@@ -1,12 +1,13 @@
-package com.example.androidu.glcamera.ar_framework.graphics3d;
+package com.example.androidu.glcamera.ar_framework.graphics3d.camera;
 
 
+import android.opengl.GLES20;
 import android.opengl.Matrix;
 
 import com.example.androidu.glcamera.ar_framework.util.GeoMath;
-import com.example.androidu.glcamera.ar_framework.util.MyMath;
+import com.example.androidu.glcamera.ar_framework.util.VectorMath;
 
-public class SensorCamera extends Camera3D {
+public class SensorCamera3D extends Camera3D {
 
     public enum OrientationMode{PORTRAIT, LANDSCAPE}
 
@@ -24,6 +25,11 @@ public class SensorCamera extends Camera3D {
 
     }
 
+
+    public void setOrientation(float[] orientation){
+
+    }
+
     public void setLatLonAlt(float[] latLonAlt){
         float[] xyz = new float[3];
         GeoMath.latLonAltToXYZ(latLonAlt, xyz);
@@ -33,17 +39,23 @@ public class SensorCamera extends Camera3D {
     public float[] getLatLonAlt(){return null;}
 
 
+    public void setClearColor(float[] color){
+        GLES20.glClearColor(color[0], color[1], color[2], color[3]);
+    }
+
+
+
 
 
     private void portraitMatrixFromRotation(float[] matrix, float[] rotation){
         // 'rotation' represents the last 3 terms of a rotation quaternion.
         // Extract angle and axis of rotation from the quaternion.
         float[] rVec = {rotation[0], rotation[1], rotation[2]};
-        float magnitude = MyMath.magnitude(rVec);
+        float magnitude = VectorMath.magnitude(rVec);
         rVec[0] /= magnitude;
         rVec[1] /= magnitude;
         rVec[2] /= magnitude;
-        float angle = MyMath.radToDegrees(2 * (float)Math.asin(magnitude));
+        float angle = VectorMath.radToDegrees(2 * (float)Math.asin(magnitude));
 
 
         // Create a rotation matrix from the angle and axis of rotation
@@ -59,11 +71,11 @@ public class SensorCamera extends Camera3D {
 
     private void landscapeMatrixFromRotation(float[] matrix, float[] rotation){
         float[] rVec = {rotation[0], rotation[1], rotation[2]};
-        float magnitude = MyMath.magnitude(rVec);
+        float magnitude = VectorMath.magnitude(rVec);
         rVec[0] /= magnitude;
         rVec[1] /= magnitude;
         rVec[2] /= magnitude;
-        float angle = MyMath.radToDegrees(2 * (float)Math.asin(magnitude));
+        float angle = VectorMath.radToDegrees(2 * (float)Math.asin(magnitude));
 
 
         Matrix.setRotateM(matrix, 0, angle, rVec[0], rVec[1], rVec[2]);

@@ -8,23 +8,26 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.androidu.glcamera.R;
-import com.example.androidu.glcamera.ar_framework.graphics3d.Camera3D;
-import com.example.androidu.glcamera.ar_framework.graphics3d.billboard.BillboardMaker;
-import com.example.androidu.glcamera.ar_framework.graphics3d.billboard.SizedBillboard;
-import com.example.androidu.glcamera.ar_framework.sensor.MyGps;
-import com.example.androidu.glcamera.ar_framework.sensor.MySensor;
-import com.example.androidu.glcamera.ar_framework.ui.GLCameraActivity;
-import com.example.androidu.glcamera.ar_framework.util.MyMath;
+import com.example.androidu.glcamera.ar_framework.graphics3d.camera.Camera3D;
+import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.billboard.BillboardMaker;
+import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.billboard.SizedBillboard;
+import com.example.androidu.glcamera.ar_framework.graphics3d.projection.Projection;
+import com.example.androidu.glcamera.ar_framework.sensor.ARGps;
+import com.example.androidu.glcamera.ar_framework.sensor.ARSensor;
+import com.example.androidu.glcamera.ar_framework.ui.ARActivity;
+import com.example.androidu.glcamera.ar_framework.util.MatrixMath;
+import com.example.androidu.glcamera.ar_framework.util.VectorMath;
 
 
-public class BillboardCompassActivity extends GLCameraActivity {
+public class BillboardCompassActivity extends ARActivity {
     static final String TAG = "waka_BBCompass";
 
     SizedBillboard mNorthBB, mEastBB, mSouthBB, mWestBB;
     Camera3D mCamera;
+    Projection mProjection;
 
-    MySensor mOrientation;
-    MyGps mGps;
+    ARSensor mOrientation;
+    ARGps mGps;
 
     float[] scratchMatrix = new float[16];
 
@@ -33,10 +36,10 @@ public class BillboardCompassActivity extends GLCameraActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mOrientation = new MySensor(this, MySensor.ROTATION_VECTOR);
+        mOrientation = new ARSensor(this, ARSensor.ROTATION_VECTOR);
         mOrientation.addListener(mOrientationListener);
 
-        mGps = new MyGps(this);
+        mGps = new ARGps(this);
         mGps.addListener(mGPSListener);
     }
 
@@ -68,6 +71,7 @@ public class BillboardCompassActivity extends GLCameraActivity {
         positionCompass();
 
         mCamera = new Camera3D();
+        mProjection = new Projection();
     }
 
     @Override
@@ -75,7 +79,7 @@ public class BillboardCompassActivity extends GLCameraActivity {
         super.GLResize(width, height);
 
         GLES20.glViewport(0, 0, width, height);
-        mCamera.setPerspective(60, (float)width / height, 0.1f, 1000f);
+        mProjection.setPerspective(60, (float)width / height, 0.1f, 1000f);
     }
 
     @Override
@@ -108,16 +112,16 @@ public class BillboardCompassActivity extends GLCameraActivity {
 
     private void drawCompass(){
 
-        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mNorthBB.getMatrix(), 0);
+        MatrixMath.multiplyMatrices(scratchMatrix, mProjection.getProjectionMatrix(), mCamera.getViewMatrix(), mNorthBB.getMatrix());
         mNorthBB.draw(scratchMatrix);
 
-        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mEastBB.getMatrix(), 0);
+        MatrixMath.multiplyMatrices(scratchMatrix, mProjection.getProjectionMatrix(), mCamera.getViewMatrix(), mEastBB.getMatrix());
         mEastBB.draw(scratchMatrix);
 
-        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mSouthBB.getMatrix(), 0);
+        MatrixMath.multiplyMatrices(scratchMatrix, mProjection.getProjectionMatrix(), mCamera.getViewMatrix(), mSouthBB.getMatrix());
         mSouthBB.draw(scratchMatrix);
 
-        Matrix.multiplyMM(scratchMatrix, 0, mCamera.getViewProjectionMatrix(), 0, mWestBB.getMatrix(), 0);
+        MatrixMath.multiplyMatrices(scratchMatrix, mProjection.getProjectionMatrix(), mCamera.getViewMatrix(), mWestBB.getMatrix());
         mWestBB.draw(scratchMatrix);
     }
 
@@ -127,7 +131,7 @@ public class BillboardCompassActivity extends GLCameraActivity {
     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    MySensor.Listener mOrientationListener = new MySensor.Listener() {
+    ARSensor.Listener mOrientationListener = new ARSensor.Listener() {
         @Override
         public void onSensorEvent(SensorEvent event) {
 
@@ -143,11 +147,11 @@ public class BillboardCompassActivity extends GLCameraActivity {
 
         private void portraitMatrixFromRotation(float[] matrix, float[] rotation){
             float[] rVec = {rotation[0], rotation[1], rotation[2]};
-            float magnitude = MyMath.magnitude(rVec);
+            float magnitude = VectorMath.magnitude(rVec);
             rVec[0] /= magnitude;
             rVec[1] /= magnitude;
             rVec[2] /= magnitude;
-            float angle = MyMath.radToDegrees(2 * (float)Math.asin(magnitude));
+            float angle = VectorMath.radToDegrees(2 * (float)Math.asin(magnitude));
 
 
             Matrix.setRotateM(matrix, 0, angle, rVec[0], rVec[1], rVec[2]);
@@ -160,11 +164,11 @@ public class BillboardCompassActivity extends GLCameraActivity {
 
         private void landscapeMatrixFromRotation(float[] matrix, float[] rotation){
             float[] rVec = {rotation[0], rotation[1], rotation[2]};
-            float magnitude = MyMath.magnitude(rVec);
+            float magnitude = VectorMath.magnitude(rVec);
             rVec[0] /= magnitude;
             rVec[1] /= magnitude;
             rVec[2] /= magnitude;
-            float angle = MyMath.radToDegrees(2 * (float)Math.asin(magnitude));
+            float angle = VectorMath.radToDegrees(2 * (float)Math.asin(magnitude));
 
 
             Matrix.setRotateM(matrix, 0, angle, rVec[0], rVec[1], rVec[2]);
@@ -189,7 +193,7 @@ public class BillboardCompassActivity extends GLCameraActivity {
     Location mOriginalLoc = null;
     float[] mPosition = new float[3];
 
-    MyGps.Listener mGPSListener = new MyGps.Listener() {
+    ARGps.Listener mGPSListener = new ARGps.Listener() {
         @Override
         public void handleLocation(Location location) {
 
@@ -200,8 +204,8 @@ public class BillboardCompassActivity extends GLCameraActivity {
             float distance = location.distanceTo(mOriginalLoc);
             float bearing = location.bearingTo(mOriginalLoc);
 
-            mPosition[0] = distance * (float)Math.cos(MyMath.degreesToRad(bearing));
-            mPosition[1] = distance * (float)Math.sin(MyMath.degreesToRad(bearing));
+            mPosition[0] = distance * (float)Math.cos(VectorMath.degreesToRad(bearing));
+            mPosition[1] = distance * (float)Math.sin(VectorMath.degreesToRad(bearing));
             mPosition[2] = (float)(location.getAltitude() - mOriginalLoc.getAltitude());
 
             Log.d(TAG, String.format("Position: [% .2f, % .2f, % .2f]\n", mPosition[0], mPosition[1], mPosition[2]));

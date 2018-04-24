@@ -1,24 +1,22 @@
-package com.example.androidu.glcamera.ar_framework.graphics3d;
+package com.example.androidu.glcamera.ar_framework.graphics3d.drawable;
 
 
 import android.opengl.GLES20;
-import android.opengl.Matrix;
 
+import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.Drawable;
 import com.example.androidu.glcamera.ar_framework.graphics3d.helper.BufferHelper;
 import com.example.androidu.glcamera.ar_framework.graphics3d.helper.ShaderHelper;
 import com.example.androidu.glcamera.ar_framework.util.MatrixMath;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 
-public class Model3D extends Drawable{
+public class Model3D extends Drawable {
 
     private FloatBuffer mBuffer = null;
     private float[] mColor = {0.0f, 0.8f, 0.0f, 0.1f};
 
-    private int mShaderProgram;
+    private static int mShaderProgram = -1;
     private int mNumVertices = 0;
     private int mDrawingMode = GLES20.GL_TRIANGLES;
 

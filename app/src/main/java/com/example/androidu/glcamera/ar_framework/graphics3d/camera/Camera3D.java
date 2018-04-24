@@ -1,8 +1,9 @@
-package com.example.androidu.glcamera.ar_framework.graphics3d;
+package com.example.androidu.glcamera.ar_framework.graphics3d.camera;
 
 import android.opengl.Matrix;
 
-import com.example.androidu.glcamera.ar_framework.util.MyMath;
+import com.example.androidu.glcamera.ar_framework.util.MatrixMath;
+import com.example.androidu.glcamera.ar_framework.util.VectorMath;
 
 public class Camera3D {
     private static final String TAG = "waka_Camera3D";
@@ -18,8 +19,6 @@ public class Camera3D {
     private float[] mRightVec = new float[]{1, 0, 0, 0};
 
     private float[] mViewMatrix = new float[16];
-    private float[] mProjectionMatrix = new float[16];
-    private float[] mViewProjectionMatrix = new float[16];
 
     private static final float[] tempMatrix = new float[16]; // used for calculations
 
@@ -30,10 +29,10 @@ public class Camera3D {
     }
 
     public void set(float[] position, float[] frontVec, float[] upVec){
-        MyMath.copyVec(position, mPosition, 3);                                 mPosition[3] =  1;
-        MyMath.copyVec(frontVec, mFrontVec, 3);                                 mFrontVec[3] =  0;
-        MyMath.copyVec(upVec, mUpVec, 3);                                       mUpVec[3]    =  0;
-        MyMath.copyVec(MyMath.crossProduct(mFrontVec, mUpVec), mRightVec, 3);   mRightVec[3] =  0;
+        VectorMath.copyVec(position, mPosition, 3);                                 mPosition[3] =  1;
+        VectorMath.copyVec(frontVec, mFrontVec, 3);                                 mFrontVec[3] =  0;
+        VectorMath.copyVec(upVec, mUpVec, 3);                                       mUpVec[3]    =  0;
+        VectorMath.copyVec(VectorMath.crossProduct(mFrontVec, mUpVec), mRightVec, 3);   mRightVec[3] =  0;
     }
 
 
@@ -44,13 +43,6 @@ public class Camera3D {
                 mPosition[0] + mFrontVec[0], mPosition[1] + mFrontVec[1], mPosition[2] + mFrontVec[2],
                 mUpVec[0], mUpVec[1], mUpVec[2]);
 
-        Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
-    }
-
-
-    public void setPerspective(float viewAngle, float aspectRatio, float nearD, float farD){
-        Matrix.perspectiveM(mProjectionMatrix, 0, viewAngle, aspectRatio, nearD, farD);
-        Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
     }
 
 
@@ -101,14 +93,12 @@ public class Camera3D {
     }
 
 
-    public float[] getProjectionMatrix(){
-        return mProjectionMatrix;
+    public void reset(){
+        VectorMath.copyVec(INITIAL_POSITION, mPosition, 4);
+        VectorMath.copyVec(INITIAL_FRONT_VECTOR, mFrontVec, 4);
+        VectorMath.copyVec(INITIAL_UP_VECTOR, mUpVec, 4);
+        VectorMath.copyVec(INITIAL_RIGHT_VECTOR, mRightVec, 4);
+        VectorMath.copyVec(MatrixMath.IDENTITY_MATRIX, mViewMatrix, 16);
     }
-
-
-    public float[] getViewProjectionMatrix(){
-        return mViewProjectionMatrix;
-    }
-
 
 }

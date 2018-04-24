@@ -18,12 +18,12 @@ public class ShaderHelper {
 
         if(status[0] == 0) {
             String message = GLES20.glGetShaderInfoLog(shader);
-            Log.d(TAG, "Vertex Shader Error: \n" + message);
+            Log.d(TAG, "Shader Compile Error: \n" + message);
             GLES20.glDeleteShader(shader);
             return 0;
         }
         else{
-            //Log.d(TAG, "Vertex Shader Good");
+            Log.d(TAG, "Shader Compile Good");
             return shader;
         }
     }
@@ -43,7 +43,7 @@ public class ShaderHelper {
             return 0;
         }
         else{
-            //Log.d(TAG, "Program Link Good");
+            Log.d(TAG, "Program Link Good");
             return program;
         }
     }
