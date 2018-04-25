@@ -1,6 +1,7 @@
 # JPL-AR-Framework
 This project is an Augmented Reality (AR) Framework, designed to display data from JPL's Watertrek system.
-However are general purpose and can be used for multiple applications.
+However, the functions are general purpose and can be used for multiple applications. This framework is written
+in Java for the Android Platform.
 
 ## This project's approach to AR
 There are different ways to approach AR. 
@@ -57,3 +58,14 @@ In general, I would split this project into the following components
 ## Sample code
 <description will be added shortly>
 
+## Downloading, Building, and Running
+This project is written in Java for Android devices (particularly phones) using Android Studio. In order to download, build
+and run this project, do the following:
+1) Download and install Android studio (if not already installed)
+2) Download this project (either clone or download zip file and extract)
+3) In Android Studio, go to File -> Open. In the file chooser, navigate to and select the top level directory of the 
+  downloaded project. This will cause the project to open in Android Studio. 
+4) Click the "run app" button in Android Studio. This is the green triangle at the top. This compiles and runs the project. 
+   Since there are some sample Android Activities included in the project that use the framework, this will cause the app to
+   be launched on the attached device/emulator.
+   
