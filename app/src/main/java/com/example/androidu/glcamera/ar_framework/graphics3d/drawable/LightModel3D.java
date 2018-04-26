@@ -1,7 +1,6 @@
 package com.example.androidu.glcamera.ar_framework.graphics3d.drawable;
 
-// Status: This class does not work yet. Intended to be like Model3D, except contains simple lighting
-//          processing so that sides of a shape can be distinguished.
+
 
 import android.opengl.GLES20;
 
@@ -16,7 +15,7 @@ public class LightModel3D extends Drawable {
 
     private FloatBuffer mVertexBuffer = null;
     private FloatBuffer mNormalBuffer = null;
-    private float[] mColor = {0.0f, 0.8f, 0.0f, 0.1f};
+    private float[] mColor = {0.0f, 0.8f, 0.0f, 1f};
     private float[] mLightVec = {0.0f, 0.0f, -1.0f, 0.0f};
 
     private int mShaderProgram;
@@ -27,30 +26,32 @@ public class LightModel3D extends Drawable {
 
 
     private static final String vertexShaderCode =
-            "attribute vec4 vPosition;" +
-            "attribute vec4 vNormal;" +
-            "uniform mat4 uMVPMatrix;" +
-            "uniform vec4 uLightVec;" +
-            "varying vec4 vColor;" +
-            "uniform vec4 uColor;" +
-            "void main() {" +
-            "  vec4 nor = vec4(vNormal.xyz, 0.0);" +
-            "  gl_Position = uMVPMatrix * vPosition;" +
-            "  nor = uMVPMatrix * nor;" +
-            "  float dotProduct = dot(uLightVec, nor);" +
-            "  if(dotProduct > 0.0) " +
-            "     vColor = vec4(0, 0, 0, 0);" +
-            "  else" +
-            "     vColor = dotProduct * uColor;" +
-            "}";
+            "attribute vec4 vPosition;                                              " +
+            "attribute vec4 vNormal;                                                " +
+            "uniform mat4 uMVPMatrix;                                               " +
+            "uniform vec4 uLightVec;                                                " +
+            "uniform vec4 uColor;                                                   " +
+            "varying vec4 vColor;                                                   " +
+            "                                                                       " +
+            "void main() {                                                          " +
+            "  vec4 nor = vec4(vNormal.xyz, 0.0);                                   " +
+            "  vec4 light = vec4(uLightVec.xyz, 0.0);                               " +
+            "  gl_Position = uMVPMatrix * vPosition;                                " +
+            "  nor = normalize(uMVPMatrix * nor);                                   " +
+            "  light = normalize(uMVPMatrix * light);                               " +
+            "  float dotProduct = -dot(light, nor);                                 " +
+            "  if(dotProduct < 0.0)                                                 " +
+            "     dotProduct = 0.0;                                                 " +
+            "  vColor = vec4((0.3 + 0.7 * dotProduct) * uColor.xyz, 1.0);           " +
+            "}                                                                      ";
 
     private static final String fragmentShaderCode =
-            "precision mediump float;" +
-            "varying vec4 vColor;" +
-            "uniform vec4 vLight;" +
-            "void main() {" +
-            "  gl_FragColor = vColor;" +
-            "}";
+            "precision mediump float;           " +
+            "varying vec4 vColor;               " +
+            "                                   " +
+            "void main() {                      " +
+            "  gl_FragColor = vColor;           " +
+            "}                                  ";
 
 
 
@@ -82,8 +83,8 @@ public class LightModel3D extends Drawable {
         GLES20.glVertexAttribPointer(positionAttrib, 3, GLES20.GL_FLOAT, false, 3 * 4, mVertexBuffer);
 
         int normalAttrib = GLES20.glGetAttribLocation(mShaderProgram, "vNormal");
-        GLES20.glEnableVertexAttribArray(positionAttrib);
-        GLES20.glVertexAttribPointer(positionAttrib, 3, GLES20.GL_FLOAT, false, 3 * 4, mVertexBuffer);
+        GLES20.glEnableVertexAttribArray(normalAttrib);
+        GLES20.glVertexAttribPointer(normalAttrib, 3, GLES20.GL_FLOAT, false, 3 * 4, mNormalBuffer);
 
         int matrixUniform = GLES20.glGetUniformLocation(mShaderProgram, "uMVPMatrix");
         GLES20.glUniformMatrix4fv(matrixUniform, 1, false, MVPMatrix, 0);

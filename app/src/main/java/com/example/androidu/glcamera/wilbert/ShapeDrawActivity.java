@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import com.example.androidu.glcamera.ar_framework.MeshData;
 import com.example.androidu.glcamera.ar_framework.graphics3d.camera.SensorCamera3D;
+import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.LightModel3D;
 import com.example.androidu.glcamera.ar_framework.graphics3d.entity.Entity3D;
 import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.Model3D;
 import com.example.androidu.glcamera.ar_framework.graphics3d.projection.Projection;
@@ -28,10 +29,11 @@ public class ShapeDrawActivity extends ARActivity {
 
     private SensorCamera3D camera;
     private Projection projection;
+
     private Entity3D pyramidEntity;
-    private Model3D pyramidModel;
+    private LightModel3D pyramidModel;
     private float rotationAngle = 0;
-    private float distance = 0;
+    private float distance = 2000;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -76,14 +78,18 @@ public class ShapeDrawActivity extends ARActivity {
         camera = new SensorCamera3D();
         projection = new Projection();
 
-        pyramidModel = new Model3D();
-        pyramidModel.loadVertices(MeshData.pyramid());
-        //pyramidModel.setGLDrawingMode(GLES20.GL_LINE_STRIP);
+        pyramidModel = new LightModel3D();
+        float[] vertices = MeshData.pyramid();
+        float[] normals = MeshData.calculateNormals(MeshData.pyramid());
+        pyramidModel.loadVertices(vertices);
+        pyramidModel.loadNormals(normals);
+        pyramidModel.setColor(new float[]{1, 0, 1, 1});
 
         pyramidEntity = new Entity3D();
         pyramidEntity.setDrawable(pyramidModel);
 
         GLES20.glClearColor(0, 0, 0, 0);
+//        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
     }
 
     @Override
@@ -91,7 +97,7 @@ public class ShapeDrawActivity extends ARActivity {
         super.GLResize(width, height);
 
         GLES20.glViewport(0, 0, width, height);
-        projection.setPerspective(60, (float)width/height, 0.01f, 1000f);
+        projection.setPerspective(60, (float)width/height, 0.01f, 100000f);
     }
 
     @Override
@@ -101,13 +107,20 @@ public class ShapeDrawActivity extends ARActivity {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
         /* move camera as appropriate and update camera */
-        if(currentOrientation != null)
-
-            camera.setByRotationVectorSensor(currentOrientation, SensorCamera3D.OrientationMode.LANDSCAPE);
-        camera.updateViewMatrix();
+        if(currentOrientation != null) {
+            camera.setByRotationVectorSensor(currentOrientation, SensorCamera3D.OrientationMode.PORTRAIT);
+            camera.updateViewMatrix();
+        }
 
         /* move entity as appropriate */
-
+        pyramidEntity.reset();
+        pyramidEntity.scale(1000);
+        pyramidEntity.rotate(rotationAngle, 0, 1, 0);
+        pyramidEntity.rotate(-15, 1, 0, 0);
+        pyramidEntity.translate(0, 0, -distance);
+        pyramidEntity.rotate(rotationAngle, 0, 1, 0);
+//        distance -= 0.1f;
+        rotationAngle += 0.4f;
 
         /* draw the entity */
         pyramidEntity.draw(
