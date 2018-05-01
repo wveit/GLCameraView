@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.androidu.glcamera.R;
-import com.example.androidu.glcamera.ar_framework.graphics3d.camera.Camera3D;
+import com.example.androidu.glcamera.ar_framework.graphics3d.camera.Camera;
 import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.billboard.BillboardMaker;
 import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.billboard.SizedBillboard;
 import com.example.androidu.glcamera.ar_framework.graphics3d.projection.Projection;
@@ -23,7 +23,7 @@ public class BillboardCompassActivity extends ARActivity {
     static final String TAG = "waka_BBCompass";
 
     SizedBillboard mNorthBB, mEastBB, mSouthBB, mWestBB;
-    Camera3D mCamera;
+    Camera mCamera;
     Projection mProjection;
 
     ARSensor mOrientation;
@@ -70,7 +70,7 @@ public class BillboardCompassActivity extends ARActivity {
         mWestBB = BillboardMaker.make(this, 5, R.drawable.ara_icon, "West", "A compass direction");
         positionCompass();
 
-        mCamera = new Camera3D();
+        mCamera = new Camera();
         mProjection = new Projection();
     }
 
@@ -88,7 +88,6 @@ public class BillboardCompassActivity extends ARActivity {
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-        mCamera.updateViewMatrix();
 
         drawCompass();
     }
@@ -135,54 +134,12 @@ public class BillboardCompassActivity extends ARActivity {
         @Override
         public void onSensorEvent(SensorEvent event) {
 
-            float[] matrix = new float[16];
-            portraitMatrixFromRotation(matrix, event.values);
-
-            if(mCamera != null){
-                mCamera.setRotationByMatrix(matrix);
+            if (mCamera != null) {
+                mCamera.setOrientationVector(event.values, 0);
             }
 
         }
-
-
-        private void portraitMatrixFromRotation(float[] matrix, float[] rotation){
-            float[] rVec = {rotation[0], rotation[1], rotation[2]};
-            float magnitude = VectorMath.magnitude(rVec);
-            rVec[0] /= magnitude;
-            rVec[1] /= magnitude;
-            rVec[2] /= magnitude;
-            float angle = VectorMath.radToDegrees(2 * (float)Math.asin(magnitude));
-
-
-            Matrix.setRotateM(matrix, 0, angle, rVec[0], rVec[1], rVec[2]);
-
-
-            float[] adjustMatrix = new float[16];
-            Matrix.setRotateM(adjustMatrix, 0, 90, -1, 0, 0);
-            Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
-        }
-
-        private void landscapeMatrixFromRotation(float[] matrix, float[] rotation){
-            float[] rVec = {rotation[0], rotation[1], rotation[2]};
-            float magnitude = VectorMath.magnitude(rVec);
-            rVec[0] /= magnitude;
-            rVec[1] /= magnitude;
-            rVec[2] /= magnitude;
-            float angle = VectorMath.radToDegrees(2 * (float)Math.asin(magnitude));
-
-
-            Matrix.setRotateM(matrix, 0, angle, rVec[0], rVec[1], rVec[2]);
-
-
-            float[] adjustMatrix = new float[16];
-            Matrix.setRotateM(adjustMatrix, 0, 90, 0, 0, 1);
-            Matrix.rotateM(adjustMatrix, 0, 90, -1, 0, 0);
-            Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
-        }
-
-
     };
-
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -207,8 +164,6 @@ public class BillboardCompassActivity extends ARActivity {
             mPosition[0] = distance * (float)Math.cos(VectorMath.degreesToRad(bearing));
             mPosition[1] = distance * (float)Math.sin(VectorMath.degreesToRad(bearing));
             mPosition[2] = (float)(location.getAltitude() - mOriginalLoc.getAltitude());
-
-            Log.d(TAG, String.format("Position: [% .2f, % .2f, % .2f]\n", mPosition[0], mPosition[1], mPosition[2]));
         }
     };
 }

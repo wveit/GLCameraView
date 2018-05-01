@@ -11,7 +11,7 @@ import com.example.androidu.glcamera.ar_framework.util.MatrixMath;
 import java.nio.FloatBuffer;
 
 
-public class Model3D extends Drawable {
+public class Model extends Drawable {
 
     private FloatBuffer mBuffer = null;
     private float[] mColor = {0.0f, 0.8f, 0.0f, 0.1f};
@@ -40,7 +40,7 @@ public class Model3D extends Drawable {
 
 
 
-    public Model3D(){
+    public Model(){
         mShaderProgram = ShaderHelper.buildShaderProgram(vertexShaderCode, fragmentShaderCode);
     }
 

@@ -11,7 +11,7 @@ import com.example.androidu.glcamera.ar_framework.util.MatrixMath;
 import java.nio.FloatBuffer;
 
 
-public class LightModel3D extends Drawable {
+public class LitModel extends Drawable {
 
     private FloatBuffer mVertexBuffer = null;
     private FloatBuffer mNormalBuffer = null;
@@ -56,7 +56,7 @@ public class LightModel3D extends Drawable {
 
 
 
-    public LightModel3D(){
+    public LitModel(){
         mShaderProgram = ShaderHelper.buildShaderProgram(vertexShaderCode, fragmentShaderCode);
     }
 

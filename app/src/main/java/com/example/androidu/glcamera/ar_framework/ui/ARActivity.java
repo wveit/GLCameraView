@@ -22,6 +22,8 @@ import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -60,6 +62,7 @@ public class ARActivity extends AppCompatActivity {
         mGLView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         mGLView.setEGLContextClientVersion(2);
         mGLView.setRenderer(new BlankGLRenderer());
+        mGLView.setOnTouchListener(touchListener);
         mFrameLayout.addView(mGLView);
 
 
@@ -107,6 +110,16 @@ public class ARActivity extends AppCompatActivity {
 
 
 
+
+    public boolean onTouch(View v, MotionEvent event){return false;}
+
+    View.OnTouchListener touchListener = new View.OnTouchListener(){
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return ARActivity.this.onTouch(v, event);
+        }
+    };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //

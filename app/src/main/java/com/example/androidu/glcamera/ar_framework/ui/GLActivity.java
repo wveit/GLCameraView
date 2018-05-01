@@ -5,7 +5,9 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -47,7 +49,6 @@ public class GLActivity extends AppCompatActivity{
     public void GLResize(int width, int height){}
     public void GLDraw(){};
 
-
     GLSurfaceView.Renderer renderer = new GLSurfaceView.Renderer(){
 
         @Override
@@ -83,4 +84,6 @@ public class GLActivity extends AppCompatActivity{
 
         }
     };
+
+
 }

@@ -4,8 +4,8 @@ package com.example.androidu.glcamera.ar_framework.util;
 
 public class GeoMath {
 
-    private static float metersPerDegreeLat = 111111;
-    private static float metersPerDegreeLon = 111111;
+    public static float metersPerDegreeLat = 111111;
+    public static float metersPerDegreeLon = 111111;
     private static float[] referenceLLA = {34, -117, 0};
 
 
@@ -20,9 +20,9 @@ public class GeoMath {
 
 
     public static void latLonAltToXYZ(float[] latLonAlt, float[] xyz){
-        xyz[0] = (referenceLLA[0] - latLonAlt[0]) * metersPerDegreeLat;
-        xyz[1] = (latLonAlt[1] - referenceLLA[1]) * metersPerDegreeLon;
-        xyz[2] = latLonAlt[2] - referenceLLA[2];
+        xyz[0] = (latLonAlt[1] - referenceLLA[1]) * metersPerDegreeLon;
+        xyz[1] = latLonAlt[2] - referenceLLA[2];
+        xyz[2] = (referenceLLA[0] - latLonAlt[0]) * metersPerDegreeLat;
     }
 
 

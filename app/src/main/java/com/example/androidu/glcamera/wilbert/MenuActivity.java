@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import com.example.androidu.glcamera.R;
 
-public class WilbertActivity extends AppCompatActivity {
+public class MenuActivity extends AppCompatActivity {
 
     Button compassButton;
     Button landmarksButton;
@@ -26,7 +26,7 @@ public class WilbertActivity extends AppCompatActivity {
         compassButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WilbertActivity.this, BillboardCompassActivity.class);
+                Intent intent = new Intent(MenuActivity.this, BillboardCompassActivity.class);
                 startActivity(intent);
             }
         });
@@ -34,7 +34,7 @@ public class WilbertActivity extends AppCompatActivity {
         landmarksButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WilbertActivity.this, BillboardLandmarksActivity.class);
+                Intent intent = new Intent(MenuActivity.this, BillboardLandmarksActivity.class);
                 startActivity(intent);
             }
         });
@@ -42,7 +42,7 @@ public class WilbertActivity extends AppCompatActivity {
         shapeDrawingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WilbertActivity.this, ShapeDrawActivity.class);
+                Intent intent = new Intent(MenuActivity.this, ShapeDrawActivity.class);
                 startActivity(intent);
             }
         });
