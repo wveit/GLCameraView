@@ -5,11 +5,12 @@ import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.Drawable;
 import com.example.androidu.glcamera.ar_framework.graphics3d.helper.*;
 
 import java.nio.FloatBuffer;
 
-public class Billboard {
+public class Billboard extends Drawable{
     private static final String TAG = "waka_Billboard";
 
     private static final int BYTES_PER_FLOAT = 4;
@@ -60,15 +61,14 @@ public class Billboard {
         return mMatrix;
     }
 
-    public void draw(){
-        draw(mMatrix);
-    }
 
+    @Override
     public void draw(float[] matrix){
         if(matrix == null || matrix.length != 16) {
             Log.d(TAG, "Billboard.draw() being called with improper mMatrix");
             return;
         }
+
 
         GLES20.glUseProgram(sGLProgramId);
 

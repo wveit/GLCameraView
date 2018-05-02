@@ -32,12 +32,6 @@ public class SizedBillboard extends Drawable{
         mBillboard.setBitmap(bitmap);
     }
 
-    public void draw(){
-        Matrix.multiplyMM(mMatrix, 0, getMatrix(), 0, mScaleMatrix, 0);
-        mBillboard.draw(mMatrix);
-
-    }
-
     @Override
     public void draw(float[] matrix){
         Matrix.multiplyMM(mMatrix, 0, matrix, 0, mScaleMatrix, 0);

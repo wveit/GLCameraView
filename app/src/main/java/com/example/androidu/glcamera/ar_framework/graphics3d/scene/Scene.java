@@ -30,7 +30,7 @@ public class Scene {
         entity.setDrawable(drawable);
         entity.setScale(scale[0], scale[1], scale[2]);
         entity.setPosition(xyz[0], xyz[1], xyz[2]);
-        entity.setRotation(angle);
+        entity.setYaw(angle);
         add(entity);
         return entity;
     }

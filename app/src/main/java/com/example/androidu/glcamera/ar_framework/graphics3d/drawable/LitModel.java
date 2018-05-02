@@ -7,6 +7,7 @@ import android.opengl.GLES20;
 import com.example.androidu.glcamera.ar_framework.graphics3d.helper.BufferHelper;
 import com.example.androidu.glcamera.ar_framework.graphics3d.helper.ShaderHelper;
 import com.example.androidu.glcamera.ar_framework.util.MatrixMath;
+import com.example.androidu.glcamera.ar_framework.util.VectorMath;
 
 import java.nio.FloatBuffer;
 
@@ -110,9 +111,10 @@ public class LitModel extends Drawable {
     }
 
 
+    @Override
     public void setColor(float[] rgbaVec){
-        if(rgbaVec != null || rgbaVec.length == 4)
-            mColor = rgbaVec;
+        if(rgbaVec != null && rgbaVec.length == 4)
+            VectorMath.copyVec(rgbaVec, mColor, 4);
     }
 
 

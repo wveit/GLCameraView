@@ -1,4 +1,4 @@
-package com.example.androidu.glcamera.ar_framework;
+package com.example.androidu.glcamera.landmark;
 
 
 import java.util.ArrayList;
@@ -42,5 +42,11 @@ public class MountainData {
 
         return list;
     }
+
+    public float[] mtWilson = {34.224770353682786f, -118.05668717979921f, 1733.442f};
+    public float[] sanGabrielPeak = {34.24340686131956f, -118.09707311231966f, 1826.785f};
+    public float[] mtLukens = {34.26899177233548f, -118.23898315429688f, 1547.361f};
+    public float[] brownMountain = {34.2366701f, -118.14701609999997f, 1357.138f};
+    public float[] hoytMountain = {34.27196702744981f, -118.17869480013769f, 1152.849f};
 
 }

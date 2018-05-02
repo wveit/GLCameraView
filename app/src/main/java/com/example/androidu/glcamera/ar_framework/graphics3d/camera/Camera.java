@@ -32,8 +32,9 @@ public class Camera {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void resetViewMatrix(){
-        Matrix.setIdentityM(viewMatrix, 0);
+    public void reset(){
+        resetVectors();
+        matrixIsClean = false;
     }
 
     public void setPosition(float x, float y, float z){
@@ -55,9 +56,7 @@ public class Camera {
     }
 
     public void setOrientation(float angle, float axisX, float axisY, float axisZ){
-        front[0] = 0; front[1] = 0; front[2] = -1;
-        right[0] = 1; right[1] = 0; right[2] = 0;
-        up[0] = 0; up[1] = 1; up[2] = 0;
+        resetVectors();
 
         Matrix.setRotateM(scratchMat, 0, angle, axisX, axisY, axisZ);
         Matrix.multiplyMV(scratchVec, 0, scratchMat, 0, front, 0); VectorMath.copyVec(scratchVec, front, 4);
@@ -75,9 +74,7 @@ public class Camera {
     }
 
     public void setRotationMatrix(float[] matrix){
-        front[0] = 0; front[1] = 0; front[2] = -1;
-        right[0] = 1; right[1] = 0; right[2] = 0;
-        up[0] = 0; up[1] = 1; up[2] = 0;
+        resetVectors();
 
         Matrix.multiplyMV(scratchVec, 0, scratchMat, 0, front, 0); VectorMath.copyVec(scratchVec, front, 4);
         Matrix.multiplyMV(scratchVec, 0, scratchMat, 0, up, 0); VectorMath.copyVec(scratchVec, up, 4);
@@ -90,6 +87,11 @@ public class Camera {
         matrixIsClean = true;
     };
 
+    private void resetVectors(){
+        front[0] = 0;   front[1] = 0;   front[2] = -1;
+        right[0] = 1;   right[1] = 0;   right[2] = 0;
+        up[0]    = 0;   up[1]    = 1;   up[2]    = 0;
+    }
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -132,13 +134,9 @@ public class Camera {
         float y = rotationQuaternion[1] / magnitude;
         float z = rotationQuaternion[2] / magnitude;
 
-//        Log.d(TAG, String.format("%f   (%f, %f, %f)", angle, x, y, z));
-
         Matrix.setRotateM(scratchMat, 0, angle, x, y, z);
 
-        front[0] = 0; front[1] = 0; front[2] = -1;
-        right[0] = 1; right[1] = 0; right[2] = 0;
-        up[0] = 0; up[1] = 1; up[2] = 0;
+        resetVectors();
 
         Matrix.multiplyMV(scratchVec, 0, scratchMat, 0, front, 0); VectorMath.copyVec(scratchVec, front, 4);
         Matrix.multiplyMV(scratchVec, 0, scratchMat, 0, up, 0); VectorMath.copyVec(scratchVec, up, 4);

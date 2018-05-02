@@ -1,8 +1,8 @@
-package com.example.androidu.glcamera.ar_framework;
+package com.example.androidu.glcamera.ar_framework.util;
 
 import com.example.androidu.glcamera.ar_framework.util.VectorMath;
 
-public class MeshData {
+public class MeshUtil {
 
     public static float[] pyramid(){
         return new float[]{
