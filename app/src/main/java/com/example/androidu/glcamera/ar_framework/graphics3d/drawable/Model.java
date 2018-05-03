@@ -27,14 +27,16 @@ public class Model extends Drawable {
     private static final String vertexShaderCode =
             "attribute vec4 vPosition;" +
             "uniform mat4 uMVPMatrix;" +
-            "void main() {" +
+            "void main() " +
+            "{" +
             "  gl_Position = uMVPMatrix * vPosition;" +
             "}";
 
     private static final String fragmentShaderCode =
             "precision mediump float;" +
             "uniform vec4 vColor;" +
-            "void main() {" +
+            "void main() " +
+            "{" +
             "  gl_FragColor = vColor;" +
             "}";
 

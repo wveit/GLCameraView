@@ -86,6 +86,14 @@ public class Entity extends Drawable{
 //        matrixIsClean = true;
 //    }
 
+    // TODO Entity: add setModelMatrix method
+    public void setModelMatrix(float[] newMatrix){}
+
+    // TODO Entity: Add the movement methods that camera has
+
+    // TODO Entity: Add getters for position, rotation and other things
+    public float[] getPosition(){return new float[]{0, 0, 0};}
+
     public float[] getModelMatrix(){
         if(!matrixIsClean)
             updateModelMatrix();

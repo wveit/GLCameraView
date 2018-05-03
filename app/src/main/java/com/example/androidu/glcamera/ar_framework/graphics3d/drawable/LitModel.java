@@ -3,6 +3,7 @@ package com.example.androidu.glcamera.ar_framework.graphics3d.drawable;
 
 
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.example.androidu.glcamera.ar_framework.graphics3d.helper.BufferHelper;
 import com.example.androidu.glcamera.ar_framework.graphics3d.helper.ShaderHelper;
@@ -13,6 +14,8 @@ import java.nio.FloatBuffer;
 
 
 public class LitModel extends Drawable {
+    
+    private static final String TAG = "waka-litmodel";
 
     private FloatBuffer mVertexBuffer = null;
     private FloatBuffer mNormalBuffer = null;
@@ -119,6 +122,16 @@ public class LitModel extends Drawable {
 
 
     public void loadVertices(float[] vertexList){
+//        Log.d(TAG, "..... loadVertices() .....");
+//
+//        for(int i = 0; i < vertexList.length; i+= 9){
+//            Log.d(TAG, String.format("(%f, %f, %f)\n", vertexList[i+0], vertexList[i+1], vertexList[i+2]));
+//            Log.d(TAG, String.format("(%f, %f, %f)\n", vertexList[i+3], vertexList[i+4], vertexList[i+5]));
+//            Log.d(TAG, String.format("(%f, %f, %f)\n", vertexList[i+6], vertexList[i+7], vertexList[i+8]));
+//            Log.d(TAG, String.format("  "));
+//        }
+        
+        
         mNumVertices = vertexList.length / FLOATS_PER_VERTEX;
         mVertexBuffer = BufferHelper.arrayToBuffer(vertexList);
     }

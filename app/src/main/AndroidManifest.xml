@@ -37,7 +37,9 @@
             android:name=".wilbert.ShapeDrawActivity"
             android:screenOrientation="portrait"/>
 
-
+        <activity
+            android:name=".wilbert.MountainDrawActivity"
+            android:screenOrientation="portrait"/>
 
     </application>
 

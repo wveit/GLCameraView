@@ -70,10 +70,12 @@ public class VectorMath {
     public static String vecToString(float[] vec){
         StringBuilder sb = new StringBuilder();
         sb.append("Vec: (");
-        sb.append(String.format("% .2f", vec[0]));
+//        sb.append(String.format("% .2f", vec[0]));
+        sb.append(String.format("%f", vec[0]));
         for(int i = 1; i < vec.length; i++){
             sb.append(", ");
-            sb.append(String.format("% .2f", vec[i]));
+//            sb.append(String.format("% .2f", vec[i]));
+            sb.append(String.format("%f", vec[i]));
         }
         sb.append(")");
         return sb.toString();

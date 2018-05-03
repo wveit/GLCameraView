@@ -12,7 +12,7 @@ import com.example.androidu.glcamera.ar_framework.graphics3d.helper.*;
 public class BillboardMaker {
 
 
-    public static Billboard make(Context context, int scale, int iconResourceId, String title, String text){
+    public static Billboard make(Context context, int iconResourceId, String title, String text){
         Billboard billboard = new Billboard();
 
         Bitmap bitmap = Bitmap.createBitmap(400, 200, Bitmap.Config.ARGB_8888);
@@ -36,6 +36,14 @@ public class BillboardMaker {
         bitmap.recycle();
         icon.recycle();
 
+        return billboard;
+    }
+
+    public static Billboard make(Context context, int iconResourceId){
+        Billboard billboard = new Billboard();
+        Bitmap bitmap = TextureHelper.bitmapFromResource(context, iconResourceId);
+        billboard.setBitmap(bitmap);
+        bitmap.recycle();
         return billboard;
     }
 

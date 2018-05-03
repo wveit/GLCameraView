@@ -9,10 +9,10 @@
     import android.view.MotionEvent;
     import android.view.View;
 
-
-    import com.example.androidu.glcamera.ar_framework.util.MeshUtil;
+    import com.example.androidu.glcamera.R;
     import com.example.androidu.glcamera.ar_framework.graphics3d.camera.Camera;
-    import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.Drawable;
+    import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.Billboard;
+    import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.BillboardMaker;
     import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.LitModel;
     import com.example.androidu.glcamera.ar_framework.graphics3d.entity.Entity;
     import com.example.androidu.glcamera.ar_framework.graphics3d.projection.Projection;
@@ -20,11 +20,15 @@
     import com.example.androidu.glcamera.ar_framework.sensor.ARGps;
     import com.example.androidu.glcamera.ar_framework.sensor.ARSensor;
     import com.example.androidu.glcamera.ar_framework.ui.ARActivity;
+    import com.example.androidu.glcamera.ar_framework.util.GeoMath;
+    import com.example.androidu.glcamera.ar_framework.util.HeightMapConverter;
+    import com.example.androidu.glcamera.ar_framework.util.MeshUtil;
+    import com.example.androidu.glcamera.landmark.MountainData;
 
 
-    public class ShapeDrawActivity extends ARActivity {
+    public class MountainDrawActivity extends ARActivity {
 
-        private static final String TAG = "waka-shapes";
+        private static final String TAG = "waka-mountain";
 
         private ARGps location;
         private float[] currentLocation = null;
@@ -34,14 +38,12 @@
         private Projection projection;
         private Camera camera;
 
-        private LitModel model;
-        private Entity entity1, entity2, entity3;
+        private LitModel pyramidModel;
+        private Billboard mountainBB, riverBB, wellBB;
+        private Entity en1, en2, en3, en4, en5;
         private Scene scene;
 
-        float moveFwd;
-        float moveRight;
-        float moveUp;
-        float turnRight;
+        float moveFwd, moveRight, moveUp, turnRight, size = 1;
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,33 +86,17 @@
         public void GLInit() {
             super.GLInit();
 
-            Log.d(TAG, "....... init .........");
+            currentLocation = null;
+            currentOrientation = null;
 
-            projection = new Projection();
-            camera = new Camera();
-            camera.setPosition(0, 0, 0);
-
-            model = new LitModel();
-            model.loadVertices(MeshUtil.pyramid());
-            model.loadNormals(MeshUtil.calculateNormals(MeshUtil.pyramid()));
-
+            riverBB = BillboardMaker.make(this, R.drawable.river_icon);
+            wellBB = BillboardMaker.make(this, R.drawable.well_icon);
+            mountainBB = BillboardMaker.make(this, R.drawable.mountain_icon);
 
             scene = new Scene();
 
-            entity1 = scene.addDrawable(model);
-            entity1.setPosition(-2, 0, -10);
-            entity1.setColor(new float[]{1, 0, 0, 1});
-
-            entity2 = scene.addDrawable(model);
-            entity2.setPosition(0, 0, -10);
-            entity2.setScale(1, 3, 1);
-            entity2.setColor(new float[]{0, 0, 1, 1});
-
-            entity3 = scene.addDrawable(model);
-            entity3.setPosition(2, 0, -10);
-            entity3.setScale(1, 3, 1);
-            entity3.setColor(new float[]{0, 1, 0, 1});
-
+            projection = new Projection();
+            camera = new Camera();
 
             GLES20.glClearColor(0, 0, 0, 0);
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -128,20 +114,20 @@
         public void GLDraw() {
             super.GLDraw();
 
-//            Log.d(TAG, "..... draw .....");
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
             /* Do camera stuff */
             if(currentOrientation != null && currentLocation != null) {
                 camera.setOrientationVector(currentOrientation, 0);
-//                camera.setPositionLatLonAlt(currentLocation);
+                camera.setPositionLatLonAlt(currentLocation);
             }
 
 
+            /* Set up Entities when the conditions are right */
+
             /* Update Entities/Scenes */
-            entity1.yaw(2);
-            entity2.yaw(3);
-            entity3.yaw(1);
+
+
 
             /* Draw */
             scene.draw(projection.getProjectionMatrix(), camera.getViewMatrix());
@@ -158,13 +144,20 @@
         private ARGps.Listener locationListener = new ARGps.Listener(){
             @Override
             public void handleLocation(Location location){
+                boolean firstTime = false;
+
                 if(currentLocation == null){
                     currentLocation = new float[3];
+                    firstTime = true;
                 }
 
                 currentLocation[0] = (float)location.getLatitude();
                 currentLocation[1] = (float)location.getLongitude();
                 currentLocation[2] = (float)location.getAltitude();
+
+                if(firstTime){
+                    GeoMath.setReference(currentLocation);
+                }
             }
         };
 
@@ -180,6 +173,14 @@
                 currentOrientation[2] = event.values[2];
             }
         };
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        //
+        //      Handling Touch Events
+        //
+        ////////////////////////////////////////////////////////////////////////////////////////////////
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -223,5 +224,7 @@
 
             return true;
         }
+
+
 
     }

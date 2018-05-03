@@ -64,10 +64,10 @@ public class BillboardCompassActivity extends ARActivity {
 
         mScene = new Scene();
 
-        Billboard north = BillboardMaker.make(this, 5, R.drawable.ara_icon, "North", "A compass direction");
-        Billboard east = BillboardMaker.make(this, 5, R.drawable.ara_icon, "East", "A compass direction");
-        Billboard south = BillboardMaker.make(this, 5, R.drawable.ara_icon, "South", "A compass direction");
-        Billboard west = BillboardMaker.make(this, 5, R.drawable.ara_icon, "West", "A compass direction");
+        Billboard north = BillboardMaker.make(this, R.drawable.ara_icon, "North", "A compass direction");
+        Billboard east = BillboardMaker.make(this, R.drawable.ara_icon, "East", "A compass direction");
+        Billboard south = BillboardMaker.make(this, R.drawable.ara_icon, "South", "A compass direction");
+        Billboard west = BillboardMaker.make(this, R.drawable.ara_icon, "West", "A compass direction");
 
         Entity northBB = mScene.addDrawable(north);
         Entity eastBB = mScene.addDrawable(east);

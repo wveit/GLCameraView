@@ -26,4 +26,10 @@
         android:text="Shape Drawing"
         android:id="@+id/btn_shape_draw"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mountain Drawing"
+        android:id="@+id/btn_mountain_draw"/>
+
 </LinearLayout>

@@ -1,5 +1,7 @@
 package com.example.androidu.glcamera.ar_framework.graphics3d.scene;
 
+import android.util.Log;
+
 import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.Drawable;
 import com.example.androidu.glcamera.ar_framework.graphics3d.entity.Entity;
 import com.example.androidu.glcamera.ar_framework.util.GeoMath;
@@ -7,8 +9,9 @@ import com.example.androidu.glcamera.ar_framework.util.GeoMath;
 import java.util.ArrayList;
 
 public class Scene {
+    private static final String TAG = "waka-scene";
 
-    private ArrayList<Entity> mEntityList = new ArrayList<>();
+    protected ArrayList<Entity> mEntityList = new ArrayList<>();
 
     public void add(Entity entity){
         mEntityList.add(entity);
