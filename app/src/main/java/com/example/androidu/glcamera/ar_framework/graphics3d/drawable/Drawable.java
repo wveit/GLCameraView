@@ -3,6 +3,7 @@ package com.example.androidu.glcamera.ar_framework.graphics3d.drawable;
 import com.example.androidu.glcamera.ar_framework.util.MatrixMath;
 
 public class Drawable {
+    // TODO - Separate Color stuff into a separate class/interface. (This requires adjusting subclasses as well)
 
     private static final float[] defaultColor = {0, 1, 0, 1};
 

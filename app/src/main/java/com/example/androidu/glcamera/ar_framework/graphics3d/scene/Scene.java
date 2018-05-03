@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Scene {
 
-    protected ArrayList<Entity> mEntityList = new ArrayList<>();
+    private ArrayList<Entity> mEntityList = new ArrayList<>();
 
     public void add(Entity entity){
         mEntityList.add(entity);
@@ -24,25 +24,11 @@ public class Scene {
         return mEntityList.isEmpty();
     }
 
-
-    public Entity addDrawable(Drawable drawable, float[] scale, float[] xyz, float angle){
+    public Entity addDrawable(Drawable drawable){
         Entity entity = new Entity();
         entity.setDrawable(drawable);
-        entity.setScale(scale[0], scale[1], scale[2]);
-        entity.setPosition(xyz[0], xyz[1], xyz[2]);
-        entity.setYaw(angle);
         add(entity);
         return entity;
-    }
-
-    public void addMountain(Drawable drawable, float[] latLonAlt){
-        Entity entity = new Entity();
-        entity.setDrawable(drawable);
-        float[] xyz = new float[3];
-        GeoMath.latLonAltToXYZ(latLonAlt, xyz);
-        entity.setScale(xyz[1] / 2, xyz[1], xyz[1] / 2);
-        entity.setPosition(xyz[0], 0, xyz[2]);
-        add(entity);
     }
 
 }

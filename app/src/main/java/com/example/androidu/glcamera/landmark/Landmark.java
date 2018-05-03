@@ -7,14 +7,14 @@ public class Landmark {
     public String description;
     public float latitude;
     public float longitude;
-    public float elevation;
+    public float altitude;
 
-    public Landmark(String title, String description, float latitude, float longitude, float elevation){
+    public Landmark(String title, String description, float latitude, float longitude, float altitude){
         this.title = title;
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.elevation = elevation;
+        this.altitude = altitude;
     }
 
     public float distance(Landmark other){

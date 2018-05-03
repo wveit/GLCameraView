@@ -79,6 +79,13 @@ public class Entity extends Drawable{
         matrixIsClean = true;
     }
 
+    // TODO Entity: add setLookAt(...) method
+//    public void setLookAt(float[] eye, float[] look, float[] up){
+//        Matrix.setLookAtM(modelMatrix, 0, eye[0], eye[1], eye[2], look[0], look[1], look[2], up[0], up[1], up[2]);
+//        Matrix.
+//        matrixIsClean = true;
+//    }
+
     public float[] getModelMatrix(){
         if(!matrixIsClean)
             updateModelMatrix();
@@ -126,8 +133,3 @@ public class Entity extends Drawable{
         VectorMath.copyVec(color, mColor, 4);
     }
 }
-
-
-//  Issues:
-//  * Separate color stuff into it's own subclass
-//  * Make similar changes to Drawable

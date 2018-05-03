@@ -1,4 +1,4 @@
-package com.example.androidu.glcamera.ar_framework.graphics3d.drawable.billboard;
+package com.example.androidu.glcamera.ar_framework.graphics3d.drawable;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -28,12 +28,13 @@ public class Billboard extends Drawable{
 
     private float[] mMatrix = new float[16];
 
+    public Billboard(){
+        init();
+    }
 
-
-    public static void init(Context context){
+    private static void init(){
         // Make sure shader is only loaded once
         if(!GLES20.glIsProgram(sGLProgramId))
-//            sGLProgramId = ShaderHelper.buildShaderProgram(context, R.raw.vertex_shader, R.raw.fragment_shader);
             sGLProgramId = ShaderHelper.buildShaderProgram(vertexShaderSource, fragmentShaderSource);
 
         // Make sure that buffers are only filled once
@@ -57,9 +58,6 @@ public class Billboard extends Drawable{
         mGLTextureId = TextureHelper.glTextureFromBitmap(bitmap);
     }
 
-    public float[] getMatrix(){
-        return mMatrix;
-    }
 
 
     @Override
@@ -106,25 +104,17 @@ public class Billboard extends Drawable{
     //          Drawing Helpers
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
     private static void fillBuffers(){
         sVertexBuffer = BufferHelper.arrayToBuffer(rectangleVertexFloats);
         sColorBuffer = BufferHelper.arrayToBuffer(rectangleColorFloats);
         sTexCoordBuffer = BufferHelper.arrayToBuffer(rectangleTexCoordFloats);
     }
 
-
-
-
-
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
     //          Static Mesh Data
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
     private static final float[] rectangleVertexFloats = {
             -0.5f,  -0.5f,  0.0f,
             0.5f,   -0.5f,  0.0f,
@@ -155,6 +145,11 @@ public class Billboard extends Drawable{
             0.0f, 0.0f
     };
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //          Shader Source Code
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     private static final String vertexShaderSource =
         "attribute vec4 a_Position;                 \n" +
         "attribute vec4 a_Color;                    \n" +
@@ -168,8 +163,8 @@ public class Billboard extends Drawable{
         "void main()                                \n" +
         "{                                          \n" +
         "    gl_Position = u_Matrix * a_Position;   \n" +
-        "   v_Color = a_Color;                      \n" +
-        "   v_TexCoord = a_TexCoord;                \n" +
+        "    v_Color = a_Color;                     \n" +
+        "    v_TexCoord = a_TexCoord;               \n" +
         "}                                          \n";
 
 

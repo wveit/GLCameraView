@@ -1,4 +1,4 @@
-package com.example.androidu.glcamera.ar_framework.graphics3d.drawable.billboard;
+package com.example.androidu.glcamera.ar_framework.graphics3d.drawable;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,12 +6,14 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.Billboard;
 import com.example.androidu.glcamera.ar_framework.graphics3d.helper.*;
 
 public class BillboardMaker {
-    public static SizedBillboard make(Context context, int scale, int iconResourceId, String title, String text){
-        SizedBillboard billboard = new SizedBillboard();
-        billboard.setScale(scale);
+
+
+    public static Billboard make(Context context, int scale, int iconResourceId, String title, String text){
+        Billboard billboard = new Billboard();
 
         Bitmap bitmap = Bitmap.createBitmap(400, 200, Bitmap.Config.ARGB_8888);
         Paint paint = new Paint();
@@ -36,4 +38,6 @@ public class BillboardMaker {
 
         return billboard;
     }
+
+
 }

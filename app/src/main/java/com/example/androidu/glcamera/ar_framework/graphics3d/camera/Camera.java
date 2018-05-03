@@ -25,6 +25,9 @@ public class Camera {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // TODO - Camera: Fix so that setLookAt(...) can be used with other movement functions.
+    // This function works, but it does not update the front, right and up vectors. Therefore
+    // this function cannot be mixed with other camera movement functions.
     public void setLookAt(float[] eye, float[] look, float[] up){
         Matrix.setLookAtM(viewMatrix, 0, eye[0], eye[1], eye[2], look[0], look[1], look[2], up[0], up[1], up[2]);
         matrixIsClean = true;

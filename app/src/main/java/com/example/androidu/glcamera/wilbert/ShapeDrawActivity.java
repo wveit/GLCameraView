@@ -97,9 +97,14 @@
 
 
             scene = new Scene();
-            entity1 = scene.addDrawable(model, new float[]{1, 1, 1}, new float[]{0, 1, 5}, 0);
+
+            entity1 = scene.addDrawable(model);
+            entity1.setPosition(0, 1, 5);
             entity1.setColor(new float[]{1, 0, 0, 1});
-            entity2 = scene.addDrawable(model, new float[]{1, 3, 1}, new float[]{0, 1, 5}, 0);
+
+            entity2 = scene.addDrawable(model);
+            entity2.setPosition(0, 1, 5);
+            entity2.setScale(1, 3, 1);
             entity2.setColor(new float[]{0, 0, 1, 1});
 
 
@@ -224,5 +229,5 @@
 
             return true;
         }
-        
+
     }
