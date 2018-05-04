@@ -178,7 +178,7 @@ public class Billboard extends Drawable{
         "                                                                       \n" +
         "void main()                                                            \n" +
         "{                                                                      \n" +
-        "   gl_FragColor = texture2D(u_Texture, v_TexCoord) + 0.3 * v_Color;    \n" +
+        "   gl_FragColor = texture2D(u_Texture, v_TexCoord);                    \n" +
         "}                                                                      \n";
 
 }
