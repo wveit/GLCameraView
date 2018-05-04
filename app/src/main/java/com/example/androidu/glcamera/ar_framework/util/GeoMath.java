@@ -1,8 +1,11 @@
 package com.example.androidu.glcamera.ar_framework.util;
 
 // Issues:
-//  - The calculations from this class have significant (yet possibly acceptable) errors due
-//    to precision of float. These problems will dissapear if variables changed to double.
+//  - The calculations from this class for converting between xyz and latLonAlt
+//    have significant (yet possibly acceptable) errors due
+//    to precision of float. These problems will disappear if variables changed to double.
+
+import android.location.Location;
 
 public class GeoMath {
 
@@ -68,24 +71,13 @@ public class GeoMath {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    static float[] temp1 = new float[3];
-    static float[] temp2 = new float[3];
-
     public static float llaDistance(float[] lla1, float[] lla2){
-//        latLonAltToXYZ(lla1, temp1);
-//        latLonAltToXYZ(lla2, temp2);
-//        return xyzDistance(temp1, temp2);
-
         float xDiff = (lla2[1] - lla1[1]) * metersPerDegreeLon;
         float zDiff = (lla1[0] - lla2[0]) * metersPerDegreeLat;
         return (float)Math.sqrt(xDiff * xDiff + zDiff * zDiff);
     }
 
     public static float llaBearing(float[] lla1, float[] lla2){
-//        latLonAltToXYZ(lla1, temp1);
-//        latLonAltToXYZ(lla2, temp2);
-//        return xyzBearing(temp1, temp2);
-
         float opposite = (lla2[1] - lla1[1]) * metersPerDegreeLon;
         float adjacent = (lla2[0] - lla1[0]) * metersPerDegreeLat;
 
@@ -104,6 +96,28 @@ public class GeoMath {
             theta += 360;
 
         return theta;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static Location makeLocation(float[] lla){
+        Location l = new Location("");
+        l.setLatitude(lla[0]);
+        l.setLongitude(lla[1]);
+        l.setAltitude(lla[2]);
+        return l;
+    }
+
+    public static float LocationBearing(float[] lla1, float[] lla2){
+        Location l1 = makeLocation(lla1);
+        Location l2 = makeLocation(lla2);
+        return l1.bearingTo(l2);
+    }
+
+    public static float locationDistance(float[] lla1, float[] lla2){
+        Location l1 = makeLocation(lla1);
+        Location l2 = makeLocation(lla2);
+        return l1.distanceTo(l2);
     }
 
 
