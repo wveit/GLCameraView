@@ -5,7 +5,6 @@
     import android.location.Location;
     import android.opengl.GLES20;
     import android.os.Bundle;
-    import android.util.Log;
     import android.view.MotionEvent;
     import android.view.View;
 
@@ -16,14 +15,13 @@
     import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.LitModel;
     import com.example.androidu.glcamera.ar_framework.graphics3d.entity.Entity;
     import com.example.androidu.glcamera.ar_framework.graphics3d.projection.Projection;
+    import com.example.androidu.glcamera.ar_framework.graphics3d.scene.CircleScene;
     import com.example.androidu.glcamera.ar_framework.graphics3d.scene.Scene;
     import com.example.androidu.glcamera.ar_framework.sensor.ARGps;
     import com.example.androidu.glcamera.ar_framework.sensor.ARSensor;
     import com.example.androidu.glcamera.ar_framework.ui.ARActivity;
     import com.example.androidu.glcamera.ar_framework.util.GeoMath;
-    import com.example.androidu.glcamera.ar_framework.util.HeightMapConverter;
     import com.example.androidu.glcamera.ar_framework.util.MeshUtil;
-    import com.example.androidu.glcamera.landmark.MountainData;
 
 
     public class MountainDrawActivity extends ARActivity {
@@ -40,8 +38,8 @@
 
         private LitModel pyramidModel;
         private Billboard mountainBB, riverBB, wellBB;
-        private Entity en1, en2, en3, en4, en5;
-        private Scene scene;
+        private Entity riverEn1, mountainEn1, wellEn1, pyramidEn1;
+        private CircleScene scene;
 
         float moveFwd, moveRight, moveUp, turnRight, size = 1;
 
@@ -92,8 +90,19 @@
             riverBB = BillboardMaker.make(this, R.drawable.river_icon);
             wellBB = BillboardMaker.make(this, R.drawable.well_icon);
             mountainBB = BillboardMaker.make(this, R.drawable.mountain_icon);
+            pyramidModel = new LitModel();
+            pyramidModel.loadVertices(MeshUtil.pyramid());
+            pyramidModel.loadNormals(MeshUtil.calculateNormals(MeshUtil.pyramid()));
 
-            scene = new Scene();
+            scene = new CircleScene();
+            scene.setRadius(10);
+
+            riverEn1 = scene.addDrawable(riverBB); riverEn1.setPosition(0, 0, -40);
+            mountainEn1 = scene.addDrawable(mountainBB); mountainEn1.setPosition(7, 0, -3);
+            wellEn1 = scene.addDrawable(wellBB); wellEn1.setPosition(0, 0.5f, -10);
+            pyramidEn1 = new Entity();
+            pyramidEn1.setDrawable(pyramidModel);
+            pyramidEn1.setScale(0.1f, 0.1f, 0.1f);
 
             projection = new Projection();
             camera = new Camera();
@@ -126,11 +135,18 @@
             /* Set up Entities when the conditions are right */
 
             /* Update Entities/Scenes */
-
+            if(currentLocation != null) {
+                pyramidEn1.setLatLonAlt(currentLocation);
+                pyramidEn1.move(0, 1, 0);
+                pyramidEn1.yaw(1);
+                scene.setCenterLatLonAlt(currentLocation);
+                scene.update();
+            }
 
 
             /* Draw */
             scene.draw(projection.getProjectionMatrix(), camera.getViewMatrix());
+            pyramidEn1.draw(projection.getProjectionMatrix(), camera.getViewMatrix(), pyramidEn1.getModelMatrix());
         }
 
 

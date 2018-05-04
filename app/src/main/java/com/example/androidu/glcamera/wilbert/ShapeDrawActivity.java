@@ -134,7 +134,7 @@
             /* Do camera stuff */
             if(currentOrientation != null && currentLocation != null) {
                 camera.setOrientationVector(currentOrientation, 0);
-//                camera.setPositionLatLonAlt(currentLocation);
+//                camera.setLatLonAlt(currentLocation);
             }
 
 

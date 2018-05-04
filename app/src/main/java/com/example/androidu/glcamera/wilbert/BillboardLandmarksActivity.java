@@ -114,7 +114,7 @@ public class BillboardLandmarksActivity extends ARActivity {
         for(Landmark l : landmarkTable){
             Billboard bb = BillboardMaker.make(this, R.drawable.ara_icon, l.title, l.description);
             Entity entity = mScene.addDrawable(bb);
-            entity.setPositionLatLonAlt(new float[]{l.latitude, l.longitude, l.altitude});
+            entity.setLatLonAlt(new float[]{l.latitude, l.longitude, l.altitude});
         }
     }
 
