@@ -122,16 +122,6 @@ public class LitModel extends Drawable {
 
 
     public void loadVertices(float[] vertexList){
-//        Log.d(TAG, "..... loadVertices() .....");
-//
-//        for(int i = 0; i < vertexList.length; i+= 9){
-//            Log.d(TAG, String.format("(%f, %f, %f)\n", vertexList[i+0], vertexList[i+1], vertexList[i+2]));
-//            Log.d(TAG, String.format("(%f, %f, %f)\n", vertexList[i+3], vertexList[i+4], vertexList[i+5]));
-//            Log.d(TAG, String.format("(%f, %f, %f)\n", vertexList[i+6], vertexList[i+7], vertexList[i+8]));
-//            Log.d(TAG, String.format("  "));
-//        }
-        
-        
         mNumVertices = vertexList.length / FLOATS_PER_VERTEX;
         mVertexBuffer = BufferHelper.arrayToBuffer(vertexList);
     }

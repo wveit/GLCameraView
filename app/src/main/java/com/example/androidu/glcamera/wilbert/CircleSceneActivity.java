@@ -5,7 +5,8 @@
     import android.location.Location;
     import android.opengl.GLES20;
     import android.os.Bundle;
-    import android.util.Log;
+    import android.view.MotionEvent;
+    import android.view.View;
 
     import com.example.androidu.glcamera.R;
     import com.example.androidu.glcamera.ar_framework.graphics3d.camera.Camera;
@@ -14,18 +15,18 @@
     import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.LitModel;
     import com.example.androidu.glcamera.ar_framework.graphics3d.entity.Entity;
     import com.example.androidu.glcamera.ar_framework.graphics3d.projection.Projection;
+    import com.example.androidu.glcamera.ar_framework.graphics3d.scene.CircleScene;
     import com.example.androidu.glcamera.ar_framework.graphics3d.scene.Scene;
     import com.example.androidu.glcamera.ar_framework.sensor.ARGps;
     import com.example.androidu.glcamera.ar_framework.sensor.ARSensor;
     import com.example.androidu.glcamera.ar_framework.ui.ARActivity;
     import com.example.androidu.glcamera.ar_framework.util.GeoMath;
     import com.example.androidu.glcamera.ar_framework.util.MeshUtil;
-    import com.example.androidu.glcamera.landmark.MountainData;
 
 
-    public class MountainDrawActivity extends ARActivity {
+    public class CircleSceneActivity extends ARActivity {
 
-        private static final String TAG = "waka-shapes";
+        private static final String TAG = "waka-mountain";
 
         private ARGps location;
         private float[] currentLocation = null;
@@ -34,13 +35,12 @@
 
         private Projection projection;
         private Camera camera;
-        private Scene scene;
 
-        private float scalingFactor = 2;
-        private float angle = 0;
+        private Billboard mountainBB, riverBB, wellBB;
+        private Entity riverEn1, mountainEn1, wellEn1, pyramidEn1;
+        private CircleScene scene;
 
-        private Entity bb1, bb2, bb3, bb4, bb5;
-
+        float moveFwd, moveRight, moveUp, turnRight, size = 1;
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,21 +83,34 @@
         public void GLInit() {
             super.GLInit();
 
-            Log.d(TAG, "....... init .........");
-
-            scene = null;
             currentLocation = null;
-            bb1 = bb2 = bb3 = bb4 = bb5 = null;
+            currentOrientation = null;
+
+            riverBB = BillboardMaker.make(this, R.drawable.river_icon);
+            wellBB = BillboardMaker.make(this, R.drawable.well_icon);
+            mountainBB = BillboardMaker.make(this, R.drawable.mountain_icon);
+
+
+
+            scene = new CircleScene();
+            scene.setRadius(10);
+
+            Entity e;
+            e = scene.addDrawable(riverBB); e.setPosition(0, 0, -40);
+            e = scene.addDrawable(mountainBB); e.setPosition(7, 0, -3);
+            e = scene.addDrawable(wellBB); e.setPosition(-7, 0.5f, -10);
+            e = scene.addDrawable(riverBB); e.setPosition(77, 0, -15);
+            e = scene.addDrawable(mountainBB); e.setPosition(4, 0, 3);
+            e = scene.addDrawable(mountainBB); e.setPosition(8, 0, 33);
+            e = scene.addDrawable(riverBB); e.setPosition(4, 0, -10);
+            e = scene.addDrawable(wellBB); e.setPosition(1, 0.5f, -10);
+            e = scene.addDrawable(riverBB); e.setPosition(1, 0, 5);
+            e = scene.addDrawable(mountainBB); e.setPosition(12, 0, 0);
+            e = scene.addDrawable(wellBB); e.setPosition(-4, 0.5f, 0);
+
 
             projection = new Projection();
             camera = new Camera();
-            camera.setPosition(0, 0, 0);
-            scene = new Scene();
-
-
-
-
-
 
             GLES20.glClearColor(0, 0, 0, 0);
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -115,88 +128,29 @@
         public void GLDraw() {
             super.GLDraw();
 
-//            Log.d(TAG, "..... draw .....");
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
             /* Do camera stuff */
             if(currentOrientation != null && currentLocation != null) {
                 camera.setOrientationVector(currentOrientation, 0);
-                camera.setPositionLatLonAlt(currentLocation);
+//                camera.setPositionLatLonAlt(currentLocation);
             }
 
+
+            /* Set up Entities when the conditions are right */
 
             /* Update Entities/Scenes */
-            if(bb1 == null && currentLocation != null){
-                setup();
+            if(currentLocation != null) {
+//                scene.setCenterLatLonAlt(currentLocation);
+                scene.update();
             }
-            if(bb1 != null) {
-                bb1.yaw(1);
-                bb2.yaw(1);
-                bb3.yaw(1);
-                bb4.yaw(1);
-                bb5.yaw(1);
-            }
+
 
             /* Draw */
             scene.draw(projection.getProjectionMatrix(), camera.getViewMatrix());
         }
 
 
-        private void setup(){
-            Entity e;
-            Billboard b;
-            float[] mountain;
-
-            LitModel pyramidModel = new LitModel();
-            pyramidModel.loadVertices(MeshUtil.pyramid());
-            pyramidModel.loadNormals(MeshUtil.calculateNormals(MeshUtil.pyramid()));
-
-            mountain = MountainData.mtWilson;
-            e = scene.addDrawable(pyramidModel);
-            e.setLatLonAlt(new float[]{mountain[0], mountain[1], 0});
-            e.setScale(scalingFactor * mountain[2] / 2, scalingFactor * mountain[2], scalingFactor * mountain[2] / 2);
-            b = BillboardMaker.make2(this, R.drawable.mountain_icon, "Mt Wilson", "elevation: " + (int)mountain[2]);
-            bb1 = scene.addDrawable(b);
-            bb1.setLatLonAlt(new float[]{mountain[0], mountain[1], mountain[2]*3});
-            bb1.setScale(2000, 2000, 2000);
-
-            mountain = MountainData.mtLukens;
-            e = scene.addDrawable(pyramidModel);
-            e.setLatLonAlt(new float[]{mountain[0], mountain[1], 0});
-            e.setScale(scalingFactor * mountain[2] / 2, scalingFactor * mountain[2], scalingFactor * mountain[2] / 2);
-            b = BillboardMaker.make2(this, R.drawable.mountain_icon, "Mt Lukens", "elevation: " + (int)mountain[2]);
-            bb2 = scene.addDrawable(b);
-            bb2.setLatLonAlt(new float[]{mountain[0], mountain[1], mountain[2]*3});
-            bb2.setScale(2000, 2000, 2000);
-
-            mountain = MountainData.sanGabrielPeak;
-            e = scene.addDrawable(pyramidModel);
-            e.setLatLonAlt(new float[]{mountain[0], mountain[1], 0});
-            e.setScale(scalingFactor * mountain[2] / 2, scalingFactor * mountain[2], scalingFactor * mountain[2] / 2);
-            b = BillboardMaker.make2(this, R.drawable.mountain_icon, "San Gabriel Peak", "elevation: " + (int)mountain[2]);
-            bb3 = scene.addDrawable(b);
-            bb3.setLatLonAlt(new float[]{mountain[0], mountain[1], mountain[2]*3});
-            bb3.setScale(2000, 2000, 2000);
-
-
-            mountain = MountainData.brownMountain;
-            e = scene.addDrawable(pyramidModel);
-            e.setLatLonAlt(new float[]{mountain[0], mountain[1], 0});
-            e.setScale(scalingFactor * mountain[2] / 2, scalingFactor * mountain[2], scalingFactor * mountain[2] / 2);
-            b = BillboardMaker.make2(this, R.drawable.mountain_icon, "Brown Mountain", "elevation: " + (int)mountain[2]);
-            bb4 = scene.addDrawable(b);
-            bb4.setLatLonAlt(new float[]{mountain[0], mountain[1], mountain[2]*3});
-            bb4.setScale(2000, 2000, 2000);
-
-            mountain = MountainData.hoytMountain;
-            e = scene.addDrawable(pyramidModel);
-            e.setLatLonAlt(new float[]{mountain[0], mountain[1], 0});
-            e.setScale(scalingFactor * mountain[2] / 2, scalingFactor * mountain[2], scalingFactor * mountain[2] / 2);
-            b = BillboardMaker.make2(this, R.drawable.mountain_icon, "Hoyt Mountain", "elevation: " + (int)mountain[2]);
-            bb5 = scene.addDrawable(b);
-            bb5.setLatLonAlt(new float[]{mountain[0], mountain[1], mountain[2]*3});
-            bb5.setScale(2000, 2000, 2000);
-        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
         //
@@ -207,18 +161,20 @@
         private ARGps.Listener locationListener = new ARGps.Listener(){
             @Override
             public void handleLocation(Location location){
+                boolean firstTime = false;
+
                 if(currentLocation == null){
                     currentLocation = new float[3];
-                    currentLocation[0] = (float)location.getLatitude();
-                    currentLocation[1] = (float)location.getLongitude();
-                    currentLocation[2] = (float)location.getAltitude();
-                    GeoMath.setReference(currentLocation);
-                    return;
+                    firstTime = true;
                 }
 
                 currentLocation[0] = (float)location.getLatitude();
                 currentLocation[1] = (float)location.getLongitude();
                 currentLocation[2] = (float)location.getAltitude();
+
+                if(firstTime){
+                    GeoMath.setReference(currentLocation);
+                }
             }
         };
 
@@ -234,6 +190,57 @@
                 currentOrientation[2] = event.values[2];
             }
         };
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        //
+        //      Handling Touch Events
+        //
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int screenWidth = v.getWidth();
+            int screenHeight = v.getHeight();
+            int x = (int)event.getX();
+            int y = (int)event.getY();
+
+            if(y < screenHeight / 4){
+                if(x < screenWidth / 2){
+                    moveFwd -= 1;
+                }
+                else{
+                    moveFwd += 1;
+                }
+            }
+            else if(y < screenHeight / 2){
+                if(x < screenWidth / 2){
+                    moveRight -= 1;
+                }
+                else{
+                    moveRight += 1;
+                }
+            }
+            else if(y < 3 * screenHeight / 4){
+                if(x < screenWidth / 2){
+                    moveUp -= 1;
+                }
+                else{
+                    moveUp += 1;
+                }
+            }
+            else {
+                if(x < screenWidth / 2){
+                    turnRight -= 1;
+                }
+                else{
+                    turnRight += 1;
+                }
+            }
+
+            return true;
+        }
 
 
 

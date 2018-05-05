@@ -13,7 +13,8 @@ public class MenuActivity extends AppCompatActivity {
     Button compassButton;
     Button landmarksButton;
     Button shapeDrawingButton;
-    Button mountainDrawingButton;
+    Button circleSceneButton;
+    Button mountainButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +24,8 @@ public class MenuActivity extends AppCompatActivity {
         compassButton = (Button)findViewById(R.id.btn_billboard_compass);
         landmarksButton = (Button)findViewById(R.id.btn_landmarks);
         shapeDrawingButton = (Button)findViewById(R.id.btn_shape_draw);
-        mountainDrawingButton = (Button)findViewById(R.id.btn_mountain_draw);
+        circleSceneButton = (Button)findViewById(R.id.btn_circle_scene_draw);
+        mountainButton = (Button)findViewById(R.id.btn_mountain_draw);
 
         compassButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +51,15 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
-        mountainDrawingButton.setOnClickListener(new View.OnClickListener() {
+        circleSceneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this, CircleSceneActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mountainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, MountainDrawActivity.class);

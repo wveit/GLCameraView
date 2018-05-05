@@ -38,6 +38,10 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".wilbert.CircleSceneActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".wilbert.MountainDrawActivity"
             android:screenOrientation="portrait"/>
 

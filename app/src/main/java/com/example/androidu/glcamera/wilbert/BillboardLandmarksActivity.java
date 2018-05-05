@@ -12,9 +12,11 @@ import com.example.androidu.glcamera.ar_framework.graphics3d.drawable.BillboardM
 import com.example.androidu.glcamera.ar_framework.graphics3d.entity.Entity;
 import com.example.androidu.glcamera.ar_framework.graphics3d.projection.Projection;
 import com.example.androidu.glcamera.ar_framework.graphics3d.scene.CircleScene;
+import com.example.androidu.glcamera.ar_framework.graphics3d.scene.Scene;
 import com.example.androidu.glcamera.ar_framework.sensor.ARGps;
 import com.example.androidu.glcamera.ar_framework.sensor.ARSensor;
 import com.example.androidu.glcamera.ar_framework.ui.ARActivity;
+import com.example.androidu.glcamera.ar_framework.util.GeoMath;
 import com.example.androidu.glcamera.landmark.Landmark;
 import com.example.androidu.glcamera.landmark.LandmarkTable;
 
@@ -22,7 +24,6 @@ import com.example.androidu.glcamera.landmark.LandmarkTable;
 public class BillboardLandmarksActivity extends ARActivity {
     static final String TAG = "waka_BBLandmarks";
 
-    LandmarkTable landmarkTable = new LandmarkTable();
 
     CircleScene mScene;
     Camera mCamera;
@@ -74,14 +75,10 @@ public class BillboardLandmarksActivity extends ARActivity {
 
         GLES20.glClearColor(0, 0, 0, 0);
 
-
         mScene = new CircleScene();
+        mScene.setRadius(20);
         mCamera = new Camera();
         mProjection = new Projection();
-
-
-        if(landmarkTable.isEmpty())
-            landmarkTable.loadCalstateLA();
 
         setupBillboards();
     }
@@ -91,7 +88,7 @@ public class BillboardLandmarksActivity extends ARActivity {
         super.GLResize(width, height);
 
         GLES20.glViewport(0, 0, width, height);
-        mProjection.setPerspective(60, (float)width / height, 0.1f, 1000f);
+        mProjection.setPerspective(60, (float)width / height, 0.1f, 100000000000f);
     }
 
     @Override
@@ -99,6 +96,12 @@ public class BillboardLandmarksActivity extends ARActivity {
         super.GLDraw();
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
+        if(latLonAlt != null && orientation != null){
+            mCamera.setPositionLatLonAlt(latLonAlt);
+            mCamera.setOrientationVector(orientation, 0);
+            mScene.setCenterLatLonAlt(latLonAlt);
+        }
 
         mScene.draw(mProjection.getProjectionMatrix(), mCamera.getViewMatrix());
     }
@@ -110,7 +113,10 @@ public class BillboardLandmarksActivity extends ARActivity {
     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
     private void setupBillboards(){
-        mScene.setRadius(5);
+
+        LandmarkTable landmarkTable = new LandmarkTable();
+        landmarkTable.loadCalstateLA();
+
         for(Landmark l : landmarkTable){
             Billboard bb = BillboardMaker.make(this, R.drawable.ara_icon, l.title, l.description);
             Entity entity = mScene.addDrawable(bb);
@@ -144,8 +150,13 @@ public class BillboardLandmarksActivity extends ARActivity {
         @Override
         public void handleLocation(Location location) {
 
-            if(latLonAlt == null)
+            if(latLonAlt == null) {
                 latLonAlt = new float[3];
+                latLonAlt[0] = (float)location.getLatitude();
+                latLonAlt[1] = (float)location.getLongitude();
+                latLonAlt[2] = (float)location.getAltitude();
+                GeoMath.setReference(latLonAlt);
+            }
 
             latLonAlt[0] = (float)location.getLatitude();
             latLonAlt[1] = (float)location.getLongitude();
